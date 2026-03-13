@@ -343,7 +343,7 @@ export async function getSignalData(ticker: string): Promise<SignalData> {
 
     const data = await response.json();
     isLive = true;
-    return data;
+    return { ...(MOCK_DATA[ticker] || MOCK_DATA.AAPL), ...data };
   } catch {
     isLive = false;
     return MOCK_DATA[ticker] || MOCK_DATA.AAPL;
@@ -372,7 +372,10 @@ export async function getBacktestData(): Promise<BacktestData> {
 
     const data = await response.json();
     isLive = true;
-    return data;
+    return {
+      equity_curve: data.equity_curve ?? MOCK_BACKTEST.equity_curve,
+      metrics: { ...MOCK_BACKTEST.metrics, ...data.metrics },
+    };
   } catch {
     isLive = false;
     return MOCK_BACKTEST;

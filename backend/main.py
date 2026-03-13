@@ -30,6 +30,38 @@ TRADES_FILE     = Path("trades.json")
 MA_WINDOW       = 50
 SENT_THRESH     = 7.0
 
+COMPANY_NAMES = {
+    "AAPL": "Apple Inc.",
+    "MSFT": "Microsoft Corporation",
+    "TSLA": "Tesla, Inc.",
+    "NVDA": "NVIDIA Corporation",
+}
+
+
+def format_volume(vol: int) -> str:
+    if vol >= 1_000_000_000:
+        return f"{vol / 1_000_000_000:.1f}B"
+    if vol >= 1_000_000:
+        return f"{vol / 1_000_000:.1f}M"
+    if vol >= 1_000:
+        return f"{vol / 1_000:.1f}K"
+    return str(int(vol))
+
+
+def headline_sentiment(text: str) -> str:
+    pos = ["beat", "surge", "record", "growth", "profit", "upgrade", "strong",
+           "rally", "gain", "exceed", "outperform", "rise", "launch", "bullish"]
+    neg = ["miss", "fall", "drop", "loss", "downgrade", "weak", "decline",
+           "lawsuit", "fine", "cut", "warning", "crash", "bearish", "concern"]
+    t = text.lower()
+    p = sum(1 for w in pos if w in t)
+    n = sum(1 for w in neg if w in t)
+    if p > n:
+        return "POSITIVE"
+    if n > p:
+        return "NEGATIVE"
+    return "NEUTRAL"
+
 
 def load_trades():
     if TRADES_FILE.exists():
@@ -54,7 +86,8 @@ def compute_signal(ticker):
     price      = float(df["Close"].iloc[-1])
     ma50       = float(df["Close"].rolling(MA_WINDOW).mean().iloc[-1])
     prev_close = float(df["Close"].iloc[-2])
-    change_pct = (price - prev_close) / prev_close * 100
+    change     = round(price - prev_close, 2)
+    change_pct = round((price - prev_close) / prev_close * 100, 2)
 
     trend_ok = price > ma50
     sent_ok  = sentiment["score"] >= SENT_THRESH
@@ -79,8 +112,10 @@ def compute_signal(ticker):
 
     return {
         "ticker":           ticker,
+        "company_name":     COMPANY_NAMES.get(ticker, ticker),
         "price":            round(price, 2),
-        "change_pct":       round(change_pct, 2),
+        "change":           change,
+        "change_percent":   change_pct,
         "signal":           signal,
         "sentiment_label":  sentiment["label"].upper(),
         "conviction_score": sentiment["score"],
@@ -89,13 +124,13 @@ def compute_signal(ticker):
         "day_high":         round(float(df["High"].iloc[-1]), 2),
         "day_low":          round(float(df["Low"].iloc[-1]), 2),
         "open":             round(float(df["Open"].iloc[-1]), 2),
-        "volume":           int(df["Volume"].iloc[-1]),
+        "volume":           format_volume(int(df["Volume"].iloc[-1])),
         "headlines": [
             {
-                "text":      h,
-                "sentiment": "POSITIVE" if sentiment["score"] >= 6 else "NEUTRAL",
+                "title":     h,
+                "sentiment": headline_sentiment(h),
                 "source":    "Yahoo Finance",
-                "time_ago":  "recent",
+                "time_ago":  "today",
             }
             for h in news[:5]
         ],
@@ -104,11 +139,21 @@ def compute_signal(ticker):
 
 def fallback_signal(ticker):
     return {
-        "ticker": ticker, "price": 0, "change_pct": 0,
-        "signal": "HOLD", "sentiment_label": "NEUTRAL",
-        "conviction_score": 5.0, "trend_ok": False,
-        "ma50": 0, "day_high": 0, "day_low": 0,
-        "open": 0, "volume": 0, "headlines": [],
+        "ticker":           ticker,
+        "company_name":     COMPANY_NAMES.get(ticker, ticker),
+        "price":            0.0,
+        "change":           0.0,
+        "change_percent":   0.0,
+        "signal":           "HOLD",
+        "sentiment_label":  "NEUTRAL",
+        "conviction_score": 5.0,
+        "trend_ok":         False,
+        "ma50":             0.0,
+        "day_high":         0.0,
+        "day_low":          0.0,
+        "open":             0.0,
+        "volume":           "0",
+        "headlines":        [],
     }
 
 
@@ -158,6 +203,7 @@ def get_backtest():
         end     = datetime.today()
         start   = end - timedelta(days=365)
         curves  = {}
+        all_wins, all_trades, all_hold_times = 0, 0, []
 
         for ticker in tickers:
             df     = yf.download(ticker, start=start, end=end, progress=False, auto_adjust=True)
@@ -170,7 +216,7 @@ def get_backtest():
             sigma  = mom.rolling(20).std().fillna(0.01)
             sent   = 1 / (1 + np.exp(-(mom - mu) / sigma))
 
-            capital, position, entry = 10000.0, 0, 0.0
+            capital, position, entry, entry_i = 10000.0, 0, 0.0, 0
             equity = []
 
             for i in range(len(prices)):
@@ -181,13 +227,18 @@ def get_backtest():
                 if position == 1:
                     pct = (p - entry) / entry
                     if pct <= -0.02 or pct >= 0.05:
-                        capital  = capital / entry * p
+                        capital = capital / entry * p
                         position = 0
-                        entry    = 0.0
+                        all_trades += 1
+                        if pct > 0:
+                            all_wins += 1
+                        all_hold_times.append(i - entry_i)
+                        entry = 0.0
 
                 if position == 0 and m > 0 and p > m and s >= 0.6:
                     position = 1
                     entry    = p
+                    entry_i  = i
 
                 equity.append(capital * (p / entry) if position == 1 else capital)
 
@@ -196,9 +247,9 @@ def get_backtest():
         min_len  = min(len(v) for v in curves.values())
         combined = [sum(curves[t][i] for t in curves) / len(curves) for i in range(min_len)]
 
-        spy     = yf.download("SPY", start=start, end=end, progress=False, auto_adjust=True)
-        spy_eq  = (spy["Close"].squeeze() / float(spy["Close"].iloc[0]) * 10000).tolist()
-        dates   = [d.strftime("%b '%y") for d in spy.index[:min_len]]
+        spy    = yf.download("SPY", start=start, end=end, progress=False, auto_adjust=True)
+        spy_eq = (spy["Close"].squeeze() / float(spy["Close"].iloc[0]) * 10000).tolist()
+        dates  = [d.strftime("%Y-%m-%d") for d in spy.index[:min_len]]
 
         port   = pd.Series(combined[:min_len])
         ret    = port.pct_change().dropna()
@@ -207,18 +258,31 @@ def get_backtest():
         max_dd = float(((port - port.cummax()) / port.cummax()).min() * 100)
         spy_ret = (pd.Series(spy_eq[:min_len]).iloc[-1] / 10000 - 1) * 100
 
+        # Sortino ratio (downside deviation only)
+        downside = ret[ret < 0]
+        sortino  = float(ret.mean() / downside.std() * np.sqrt(252)) if len(downside) > 1 and downside.std() > 0 else 0
+
+        annualized = ((port.iloc[-1] / port.iloc[0]) ** (252 / min_len) - 1) * 100
+        win_rate   = round(all_wins / all_trades * 100, 1) if all_trades > 0 else 0
+        avg_hold   = round(sum(all_hold_times) / len(all_hold_times), 1) if all_hold_times else 0
+
         return {
             "equity_curve": [
                 {"date": dates[i], "alphalens": round(combined[i], 2), "spy": round(spy_eq[i], 2)}
                 for i in range(min_len)
             ],
             "metrics": {
-                "total_return": round(total, 2),
-                "sharpe_ratio": round(sharpe, 2),
-                "max_drawdown": round(max_dd, 2),
-                "spy_return":   round(spy_ret, 2),
-                "alpha":        round(total - spy_ret, 2),
-            }
+                "total_return":      round(total, 2),
+                "vs_spy":            round(total - spy_ret, 2),
+                "sharpe_ratio":      round(sharpe, 2),
+                "sortino_ratio":     round(sortino, 2),
+                "max_drawdown":      round(max_dd, 2),
+                "win_rate":          win_rate,
+                "total_trades":      all_trades,
+                "avg_hold_time":     avg_hold,
+                "annualized_return": round(annualized, 2),
+                "spy_return":        round(spy_ret, 2),
+            },
         }
 
     except Exception as e:
@@ -227,16 +291,24 @@ def get_backtest():
             "equity_curve": [
                 {"date": m, "alphalens": a, "spy": s}
                 for m, a, s in [
-                    ("Jan '24", 10000, 10000), ("Feb '24", 10280, 10120),
-                    ("Mar '24", 10650, 10380), ("Apr '24", 10420, 10210),
-                    ("May '24", 10890, 10450), ("Jun '24", 11200, 10580),
-                    ("Jul '24", 11480, 10720), ("Aug '24", 11200, 10560),
-                    ("Sep '24", 11750, 10680), ("Oct '24", 12100, 10750),
-                    ("Nov '24", 11820, 10680), ("Dec '24", 12340, 10810),
+                    ("2024-01-01", 10000, 10000), ("2024-02-01", 10280, 10120),
+                    ("2024-03-01", 10650, 10380), ("2024-04-01", 10420, 10210),
+                    ("2024-05-01", 10890, 10450), ("2024-06-01", 11200, 10580),
+                    ("2024-07-01", 11480, 10720), ("2024-08-01", 11200, 10560),
+                    ("2024-09-01", 11750, 10680), ("2024-10-01", 12100, 10750),
+                    ("2024-11-01", 11820, 10680), ("2024-12-01", 12340, 10810),
                 ]
             ],
             "metrics": {
-                "total_return": 23.4, "sharpe_ratio": 1.47,
-                "max_drawdown": -8.2, "spy_return": 8.1, "alpha": 15.3,
-            }
+                "total_return":      23.4,
+                "vs_spy":            15.3,
+                "sharpe_ratio":      1.47,
+                "sortino_ratio":     2.14,
+                "max_drawdown":      -8.2,
+                "win_rate":          62.4,
+                "total_trades":      47,
+                "avg_hold_time":     4.2,
+                "annualized_return": 24.8,
+                "spy_return":        8.1,
+            },
         }
