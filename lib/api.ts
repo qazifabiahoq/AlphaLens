@@ -343,7 +343,7 @@ export async function getSignalData(ticker: string): Promise<SignalData> {
 
     const data = await response.json();
     isLive = true;
-    return data;
+    return { ...(MOCK_DATA[ticker] || MOCK_DATA.AAPL), ...data };
   } catch {
     isLive = false;
     return MOCK_DATA[ticker] || MOCK_DATA.AAPL;
