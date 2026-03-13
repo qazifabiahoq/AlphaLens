@@ -196,7 +196,7 @@ function DashboardTab({
                     <div>
                       <div className="font-mono text-[14px] font-bold text-white">{ticker}</div>
                       <div className="font-sans text-[11px] text-[var(--text-secondary)]">
-                        {data.company_name.split(' ')[0]}
+                        {data.company_name?.split(' ')[0] || ''}
                       </div>
                     </div>
                     <div className="text-right">
