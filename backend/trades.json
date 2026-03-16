@@ -1,0 +1,3404 @@
+[
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.27,
+    "timestamp": "2026-03-16T15:42:37.320828",
+    "conviction": 3.72,
+    "stop_loss": 247.22,
+    "take_profit": 264.88
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.27,
+    "timestamp": "2026-03-16T15:42:38.135023",
+    "conviction": 3.72,
+    "stop_loss": 247.22,
+    "take_profit": 264.88
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 398.84,
+    "timestamp": "2026-03-16T15:42:38.565361",
+    "conviction": 3.56,
+    "stop_loss": 390.86,
+    "take_profit": 418.78
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 398.84,
+    "timestamp": "2026-03-16T15:42:39.786875",
+    "conviction": 3.56,
+    "stop_loss": 390.86,
+    "take_profit": 418.78
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.64,
+    "timestamp": "2026-03-16T15:42:39.871291",
+    "conviction": 4.76,
+    "stop_loss": 387.73,
+    "take_profit": 415.43
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.64,
+    "timestamp": "2026-03-16T15:42:41.137352",
+    "conviction": 4.76,
+    "stop_loss": 387.73,
+    "take_profit": 415.43
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.43,
+    "timestamp": "2026-03-16T15:42:41.167951",
+    "conviction": 5.26,
+    "stop_loss": 179.76,
+    "take_profit": 192.6
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.43,
+    "timestamp": "2026-03-16T15:42:42.490356",
+    "conviction": 5.26,
+    "stop_loss": 179.76,
+    "take_profit": 192.6
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.28,
+    "timestamp": "2026-03-16T15:43:25.652565",
+    "conviction": 3.72,
+    "stop_loss": 247.23,
+    "take_profit": 264.89
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.28,
+    "timestamp": "2026-03-16T15:43:26.757306",
+    "conviction": 3.72,
+    "stop_loss": 247.23,
+    "take_profit": 264.89
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 398.91,
+    "timestamp": "2026-03-16T15:43:27.021548",
+    "conviction": 3.56,
+    "stop_loss": 390.93,
+    "take_profit": 418.85
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 398.91,
+    "timestamp": "2026-03-16T15:43:28.163051",
+    "conviction": 3.56,
+    "stop_loss": 390.93,
+    "take_profit": 418.85
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.27,
+    "timestamp": "2026-03-16T15:43:28.232323",
+    "conviction": 4.71,
+    "stop_loss": 387.36,
+    "take_profit": 415.03
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.27,
+    "timestamp": "2026-03-16T15:43:29.262026",
+    "conviction": 4.71,
+    "stop_loss": 387.36,
+    "take_profit": 415.03
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.27,
+    "timestamp": "2026-03-16T15:43:29.358347",
+    "conviction": 5.26,
+    "stop_loss": 179.6,
+    "take_profit": 192.43
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.27,
+    "timestamp": "2026-03-16T15:43:30.035238",
+    "conviction": 5.26,
+    "stop_loss": 179.6,
+    "take_profit": 192.43
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.34,
+    "timestamp": "2026-03-16T15:43:42.729493",
+    "conviction": 3.72,
+    "stop_loss": 247.29,
+    "take_profit": 264.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 398.95,
+    "timestamp": "2026-03-16T15:43:43.628575",
+    "conviction": 3.56,
+    "stop_loss": 390.97,
+    "take_profit": 418.89
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.35,
+    "timestamp": "2026-03-16T15:43:44.427894",
+    "conviction": 4.71,
+    "stop_loss": 387.44,
+    "take_profit": 415.12
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.36,
+    "timestamp": "2026-03-16T15:43:45.195618",
+    "conviction": 5.26,
+    "stop_loss": 179.69,
+    "take_profit": 192.52
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.3,
+    "timestamp": "2026-03-16T15:44:03.221531",
+    "conviction": 3.65,
+    "stop_loss": 247.25,
+    "take_profit": 264.92
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.3,
+    "timestamp": "2026-03-16T15:44:25.489940",
+    "conviction": 3.72,
+    "stop_loss": 247.25,
+    "take_profit": 264.92
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.07,
+    "timestamp": "2026-03-16T15:44:25.908000",
+    "conviction": 3.56,
+    "stop_loss": 391.09,
+    "take_profit": 419.02
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.28,
+    "timestamp": "2026-03-16T15:44:26.223541",
+    "conviction": 4.71,
+    "stop_loss": 387.38,
+    "take_profit": 415.05
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.48,
+    "timestamp": "2026-03-16T15:44:26.525582",
+    "conviction": 5.26,
+    "stop_loss": 179.81,
+    "take_profit": 192.65
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.55,
+    "timestamp": "2026-03-16T15:45:25.242601",
+    "conviction": 3.72,
+    "stop_loss": 247.5,
+    "take_profit": 265.18
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.2,
+    "timestamp": "2026-03-16T15:45:25.620136",
+    "conviction": 3.56,
+    "stop_loss": 391.22,
+    "take_profit": 419.16
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.61,
+    "timestamp": "2026-03-16T15:45:25.920171",
+    "conviction": 4.71,
+    "stop_loss": 387.7,
+    "take_profit": 415.39
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.49,
+    "timestamp": "2026-03-16T15:45:26.233704",
+    "conviction": 5.26,
+    "stop_loss": 179.82,
+    "take_profit": 192.66
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.48,
+    "timestamp": "2026-03-16T15:46:25.374015",
+    "conviction": 3.72,
+    "stop_loss": 247.43,
+    "take_profit": 265.1
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.18,
+    "timestamp": "2026-03-16T15:46:25.719077",
+    "conviction": 3.56,
+    "stop_loss": 391.2,
+    "take_profit": 419.14
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.63,
+    "timestamp": "2026-03-16T15:46:26.006628",
+    "conviction": 4.71,
+    "stop_loss": 387.72,
+    "take_profit": 415.42
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.38,
+    "timestamp": "2026-03-16T15:46:26.296679",
+    "conviction": 5.26,
+    "stop_loss": 179.71,
+    "take_profit": 192.55
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.37,
+    "timestamp": "2026-03-16T15:47:11.818614",
+    "conviction": 3.72,
+    "stop_loss": 247.32,
+    "take_profit": 264.99
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.37,
+    "timestamp": "2026-03-16T15:47:12.990469",
+    "conviction": 3.72,
+    "stop_loss": 247.32,
+    "take_profit": 264.99
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.21,
+    "timestamp": "2026-03-16T15:47:13.355674",
+    "conviction": 3.56,
+    "stop_loss": 391.23,
+    "take_profit": 419.17
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.48,
+    "timestamp": "2026-03-16T15:47:14.549946",
+    "conviction": 4.71,
+    "stop_loss": 387.57,
+    "take_profit": 415.25
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.21,
+    "timestamp": "2026-03-16T15:47:14.561976",
+    "conviction": 3.56,
+    "stop_loss": 391.23,
+    "take_profit": 419.17
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.48,
+    "timestamp": "2026-03-16T15:47:15.688514",
+    "conviction": 5.26,
+    "stop_loss": 179.81,
+    "take_profit": 192.65
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.45,
+    "timestamp": "2026-03-16T15:47:15.727597",
+    "conviction": 4.71,
+    "stop_loss": 387.55,
+    "take_profit": 415.23
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.43,
+    "timestamp": "2026-03-16T15:47:16.746364",
+    "conviction": 5.26,
+    "stop_loss": 179.76,
+    "take_profit": 192.6
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.41,
+    "timestamp": "2026-03-16T15:48:02.985096",
+    "conviction": 3.72,
+    "stop_loss": 247.36,
+    "take_profit": 265.03
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.41,
+    "timestamp": "2026-03-16T15:48:03.438495",
+    "conviction": 3.72,
+    "stop_loss": 247.36,
+    "take_profit": 265.03
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.19,
+    "timestamp": "2026-03-16T15:48:03.669562",
+    "conviction": 3.56,
+    "stop_loss": 391.21,
+    "take_profit": 419.15
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.19,
+    "timestamp": "2026-03-16T15:48:04.226698",
+    "conviction": 3.56,
+    "stop_loss": 391.21,
+    "take_profit": 419.15
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.58,
+    "timestamp": "2026-03-16T15:48:04.307737",
+    "conviction": 4.71,
+    "stop_loss": 387.67,
+    "take_profit": 415.36
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.58,
+    "timestamp": "2026-03-16T15:48:04.814979",
+    "conviction": 4.71,
+    "stop_loss": 387.67,
+    "take_profit": 415.36
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.24,
+    "timestamp": "2026-03-16T15:48:04.847996",
+    "conviction": 5.26,
+    "stop_loss": 179.58,
+    "take_profit": 192.4
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.24,
+    "timestamp": "2026-03-16T15:48:05.191057",
+    "conviction": 5.26,
+    "stop_loss": 179.58,
+    "take_profit": 192.4
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.5,
+    "timestamp": "2026-03-16T15:48:29.598326",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.13
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.5,
+    "timestamp": "2026-03-16T15:48:29.924405",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.13
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.25,
+    "timestamp": "2026-03-16T15:48:30.193969",
+    "conviction": 3.56,
+    "stop_loss": 391.26,
+    "take_profit": 419.21
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.25,
+    "timestamp": "2026-03-16T15:48:30.622055",
+    "conviction": 3.56,
+    "stop_loss": 391.26,
+    "take_profit": 419.21
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.64,
+    "timestamp": "2026-03-16T15:48:30.668573",
+    "conviction": 4.71,
+    "stop_loss": 387.73,
+    "take_profit": 415.43
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.3,
+    "timestamp": "2026-03-16T15:48:31.195747",
+    "conviction": 5.26,
+    "stop_loss": 179.63,
+    "take_profit": 192.47
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.64,
+    "timestamp": "2026-03-16T15:48:31.228236",
+    "conviction": 4.71,
+    "stop_loss": 387.73,
+    "take_profit": 415.43
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.3,
+    "timestamp": "2026-03-16T15:48:31.593473",
+    "conviction": 5.26,
+    "stop_loss": 179.63,
+    "take_profit": 192.47
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.5,
+    "timestamp": "2026-03-16T15:48:44.733179",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.12
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.5,
+    "timestamp": "2026-03-16T15:48:45.667540",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.12
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.18,
+    "timestamp": "2026-03-16T15:48:45.890080",
+    "conviction": 3.56,
+    "stop_loss": 391.2,
+    "take_profit": 419.14
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.18,
+    "timestamp": "2026-03-16T15:48:46.952777",
+    "conviction": 3.56,
+    "stop_loss": 391.2,
+    "take_profit": 419.14
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.59,
+    "timestamp": "2026-03-16T15:48:46.964792",
+    "conviction": 4.71,
+    "stop_loss": 387.68,
+    "take_profit": 415.37
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.59,
+    "timestamp": "2026-03-16T15:48:47.980417",
+    "conviction": 4.71,
+    "stop_loss": 387.68,
+    "take_profit": 415.37
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.42,
+    "timestamp": "2026-03-16T15:48:48.713286",
+    "conviction": 5.26,
+    "stop_loss": 179.75,
+    "take_profit": 192.59
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.5,
+    "timestamp": "2026-03-16T15:48:52.594789",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.12
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.5,
+    "timestamp": "2026-03-16T15:48:53.731392",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.12
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.18,
+    "timestamp": "2026-03-16T15:48:53.778938",
+    "conviction": 3.56,
+    "stop_loss": 391.2,
+    "take_profit": 419.14
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.59,
+    "timestamp": "2026-03-16T15:48:54.936363",
+    "conviction": 4.71,
+    "stop_loss": 387.68,
+    "take_profit": 415.37
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.18,
+    "timestamp": "2026-03-16T15:48:54.952075",
+    "conviction": 3.56,
+    "stop_loss": 391.2,
+    "take_profit": 419.14
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.42,
+    "timestamp": "2026-03-16T15:48:56.021368",
+    "conviction": 5.26,
+    "stop_loss": 179.75,
+    "take_profit": 192.59
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.6,
+    "timestamp": "2026-03-16T15:48:56.087841",
+    "conviction": 4.71,
+    "stop_loss": 387.69,
+    "take_profit": 415.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.4,
+    "timestamp": "2026-03-16T15:48:56.833515",
+    "conviction": 5.26,
+    "stop_loss": 179.74,
+    "take_profit": 192.58
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.56,
+    "timestamp": "2026-03-16T15:49:26.152557",
+    "conviction": 3.72,
+    "stop_loss": 247.51,
+    "take_profit": 265.19
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.56,
+    "timestamp": "2026-03-16T15:49:27.096122",
+    "conviction": 3.72,
+    "stop_loss": 247.51,
+    "take_profit": 265.19
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.46,
+    "timestamp": "2026-03-16T15:49:27.289505",
+    "conviction": 3.56,
+    "stop_loss": 391.47,
+    "take_profit": 419.43
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.65,
+    "timestamp": "2026-03-16T15:49:28.338675",
+    "conviction": 4.71,
+    "stop_loss": 387.74,
+    "take_profit": 415.44
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.46,
+    "timestamp": "2026-03-16T15:49:28.344677",
+    "conviction": 3.56,
+    "stop_loss": 391.47,
+    "take_profit": 419.43
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.44,
+    "timestamp": "2026-03-16T15:49:29.380098",
+    "conviction": 5.26,
+    "stop_loss": 179.77,
+    "take_profit": 192.61
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.57,
+    "timestamp": "2026-03-16T15:49:29.406127",
+    "conviction": 4.71,
+    "stop_loss": 387.66,
+    "take_profit": 415.35
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.43,
+    "timestamp": "2026-03-16T15:49:30.270301",
+    "conviction": 5.26,
+    "stop_loss": 179.76,
+    "take_profit": 192.6
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.55,
+    "timestamp": "2026-03-16T15:50:21.062317",
+    "conviction": 3.72,
+    "stop_loss": 247.5,
+    "take_profit": 265.18
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.55,
+    "timestamp": "2026-03-16T15:50:22.426155",
+    "conviction": 3.72,
+    "stop_loss": 247.5,
+    "take_profit": 265.18
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.61,
+    "timestamp": "2026-03-16T15:50:22.509851",
+    "conviction": 3.56,
+    "stop_loss": 391.61,
+    "take_profit": 419.59
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.61,
+    "timestamp": "2026-03-16T15:50:23.518063",
+    "conviction": 3.56,
+    "stop_loss": 391.61,
+    "take_profit": 419.59
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 394.73,
+    "timestamp": "2026-03-16T15:50:23.828771",
+    "conviction": 4.71,
+    "stop_loss": 386.84,
+    "take_profit": 414.47
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 394.73,
+    "timestamp": "2026-03-16T15:50:24.927398",
+    "conviction": 4.71,
+    "stop_loss": 386.84,
+    "take_profit": 414.47
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.14,
+    "timestamp": "2026-03-16T15:50:24.966150",
+    "conviction": 5.26,
+    "stop_loss": 179.48,
+    "take_profit": 192.3
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.14,
+    "timestamp": "2026-03-16T15:50:25.999213",
+    "conviction": 5.26,
+    "stop_loss": 179.48,
+    "take_profit": 192.3
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.7,
+    "timestamp": "2026-03-16T15:51:19.682493",
+    "conviction": 3.72,
+    "stop_loss": 247.65,
+    "take_profit": 265.33
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.7,
+    "timestamp": "2026-03-16T15:51:21.294709",
+    "conviction": 3.72,
+    "stop_loss": 247.65,
+    "take_profit": 265.33
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.68,
+    "timestamp": "2026-03-16T15:51:21.720914",
+    "conviction": 3.56,
+    "stop_loss": 391.69,
+    "take_profit": 419.66
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.07,
+    "timestamp": "2026-03-16T15:51:22.112477",
+    "conviction": 4.71,
+    "stop_loss": 387.17,
+    "take_profit": 414.82
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.63,
+    "timestamp": "2026-03-16T15:51:22.436051",
+    "conviction": 5.26,
+    "stop_loss": 179.96,
+    "take_profit": 192.81
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.69,
+    "timestamp": "2026-03-16T15:52:21.358939",
+    "conviction": 3.72,
+    "stop_loss": 247.64,
+    "take_profit": 265.32
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.58,
+    "timestamp": "2026-03-16T15:52:21.717499",
+    "conviction": 3.56,
+    "stop_loss": 391.59,
+    "take_profit": 419.56
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.14,
+    "timestamp": "2026-03-16T15:52:22.133624",
+    "conviction": 4.71,
+    "stop_loss": 387.24,
+    "take_profit": 414.9
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.41,
+    "timestamp": "2026-03-16T15:52:22.504732",
+    "conviction": 5.26,
+    "stop_loss": 179.74,
+    "take_profit": 192.58
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.53,
+    "timestamp": "2026-03-16T15:52:35.018436",
+    "conviction": 3.72,
+    "stop_loss": 247.48,
+    "take_profit": 265.16
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.53,
+    "timestamp": "2026-03-16T15:52:35.337561",
+    "conviction": 3.72,
+    "stop_loss": 247.48,
+    "take_profit": 265.16
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.62,
+    "timestamp": "2026-03-16T15:52:35.556608",
+    "conviction": 3.56,
+    "stop_loss": 391.63,
+    "take_profit": 419.6
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.62,
+    "timestamp": "2026-03-16T15:52:35.978194",
+    "conviction": 3.56,
+    "stop_loss": 391.63,
+    "take_profit": 419.6
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 394.82,
+    "timestamp": "2026-03-16T15:52:36.021191",
+    "conviction": 4.71,
+    "stop_loss": 386.92,
+    "take_profit": 414.56
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 394.82,
+    "timestamp": "2026-03-16T15:52:36.441266",
+    "conviction": 4.71,
+    "stop_loss": 386.92,
+    "take_profit": 414.56
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.27,
+    "timestamp": "2026-03-16T15:52:36.472783",
+    "conviction": 5.26,
+    "stop_loss": 179.6,
+    "take_profit": 192.43
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.27,
+    "timestamp": "2026-03-16T15:52:36.737821",
+    "conviction": 5.26,
+    "stop_loss": 179.6,
+    "take_profit": 192.43
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.46,
+    "timestamp": "2026-03-16T15:52:55.212394",
+    "conviction": 3.72,
+    "stop_loss": 247.42,
+    "take_profit": 265.09
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.46,
+    "timestamp": "2026-03-16T15:52:56.223431",
+    "conviction": 3.72,
+    "stop_loss": 247.42,
+    "take_profit": 265.09
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.74,
+    "timestamp": "2026-03-16T15:52:56.670698",
+    "conviction": 3.56,
+    "stop_loss": 391.75,
+    "take_profit": 419.73
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 394.87,
+    "timestamp": "2026-03-16T15:52:57.867656",
+    "conviction": 4.71,
+    "stop_loss": 386.97,
+    "take_profit": 414.61
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.74,
+    "timestamp": "2026-03-16T15:52:57.879693",
+    "conviction": 3.56,
+    "stop_loss": 391.75,
+    "take_profit": 419.73
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.09,
+    "timestamp": "2026-03-16T15:52:59.082182",
+    "conviction": 5.26,
+    "stop_loss": 179.43,
+    "take_profit": 192.24
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 394.9,
+    "timestamp": "2026-03-16T15:52:59.107736",
+    "conviction": 4.71,
+    "stop_loss": 387.01,
+    "take_profit": 414.65
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.13,
+    "timestamp": "2026-03-16T15:52:59.974824",
+    "conviction": 5.26,
+    "stop_loss": 179.47,
+    "take_profit": 192.29
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.49,
+    "timestamp": "2026-03-16T15:53:55.244537",
+    "conviction": 3.72,
+    "stop_loss": 247.45,
+    "take_profit": 265.12
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.61,
+    "timestamp": "2026-03-16T15:53:55.575595",
+    "conviction": 3.56,
+    "stop_loss": 391.62,
+    "take_profit": 419.6
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.19,
+    "timestamp": "2026-03-16T15:53:55.862152",
+    "conviction": 4.71,
+    "stop_loss": 387.29,
+    "take_profit": 414.95
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.12,
+    "timestamp": "2026-03-16T15:53:56.174734",
+    "conviction": 5.26,
+    "stop_loss": 179.46,
+    "take_profit": 192.28
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.33,
+    "timestamp": "2026-03-16T15:54:43.308363",
+    "conviction": 3.72,
+    "stop_loss": 247.28,
+    "take_profit": 264.95
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.37,
+    "timestamp": "2026-03-16T15:54:55.480856",
+    "conviction": 3.72,
+    "stop_loss": 247.32,
+    "take_profit": 264.99
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.32,
+    "timestamp": "2026-03-16T15:54:55.831911",
+    "conviction": 3.56,
+    "stop_loss": 391.33,
+    "take_profit": 419.29
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.08,
+    "timestamp": "2026-03-16T15:54:56.163470",
+    "conviction": 4.71,
+    "stop_loss": 387.18,
+    "take_profit": 414.83
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.09,
+    "timestamp": "2026-03-16T15:54:56.510549",
+    "conviction": 5.26,
+    "stop_loss": 179.43,
+    "take_profit": 192.24
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.59,
+    "timestamp": "2026-03-16T15:55:55.618629",
+    "conviction": 3.72,
+    "stop_loss": 247.54,
+    "take_profit": 265.22
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.31,
+    "timestamp": "2026-03-16T15:55:56.034208",
+    "conviction": 3.56,
+    "stop_loss": 391.32,
+    "take_profit": 419.28
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.31,
+    "timestamp": "2026-03-16T15:55:56.336750",
+    "conviction": 4.71,
+    "stop_loss": 387.4,
+    "take_profit": 415.08
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.04,
+    "timestamp": "2026-03-16T15:55:56.640307",
+    "conviction": 5.26,
+    "stop_loss": 179.38,
+    "take_profit": 192.2
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.67,
+    "timestamp": "2026-03-16T15:56:55.324045",
+    "conviction": 3.72,
+    "stop_loss": 247.62,
+    "take_profit": 265.3
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.5,
+    "timestamp": "2026-03-16T15:56:55.692090",
+    "conviction": 3.56,
+    "stop_loss": 391.51,
+    "take_profit": 419.48
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.62,
+    "timestamp": "2026-03-16T15:56:55.986650",
+    "conviction": 4.71,
+    "stop_loss": 387.71,
+    "take_profit": 415.4
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.1,
+    "timestamp": "2026-03-16T15:56:56.284208",
+    "conviction": 5.26,
+    "stop_loss": 179.43,
+    "take_profit": 192.25
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:04:28.348536",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:04:29.302133",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:04:29.579524",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:04:30.683684",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:04:30.766300",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:04:31.630522",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:04:32.087013",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:04:32.779326",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:04:37.473052",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:04:38.563513",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:04:38.650468",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:04:39.983031",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:04:40.012668",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:04:41.368449",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:04:41.407457",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:04:42.117643",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:05:06.367681",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:05:07.425556",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:05:07.639340",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:05:08.793425",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:05:08.809089",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:05:09.884538",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:05:10.026506",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:05:10.786383",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:05:15.358475",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:05:16.425854",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:05:16.563720",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:05:17.687292",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:05:17.697298",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:05:18.826233",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:05:18.853522",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:05:19.597785",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:06:15.318071",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:06:16.284769",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:06:17.414754",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:06:18.372995",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:07:15.299962",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:07:15.633532",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:07:15.954601",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:07:16.267156",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:08:14.951169",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:08:15.371259",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:08:15.472810",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:08:15.795879",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:08:16.230582",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:09:15.283595",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:09:15.627158",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:09:15.932204",
+    "conviction": 4.71,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:09:16.304134",
+    "conviction": 4.67,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:13:38.013229",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:13:39.116166",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:13:39.348695",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:13:40.722606",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:13:40.833368",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:13:41.981561",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:13:42.116034",
+    "conviction": 5.05,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:13:43.540867",
+    "conviction": 5.05,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:14:36.795791",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:14:37.956390",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:14:39.067488",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.19,
+    "timestamp": "2026-03-16T16:14:40.201183",
+    "conviction": 5.05,
+    "stop_loss": 179.52,
+    "take_profit": 192.35
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:15:36.146848",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:15:36.468384",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:15:36.787940",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:15:37.100501",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:16:35.711395",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:16:36.034964",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:16:36.386040",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:16:36.718607",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:17:35.398090",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:17:35.734646",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:17:36.039232",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:17:36.416293",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:18:35.656995",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:18:36.061577",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:18:36.396113",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:18:36.755663",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:19:35.382482",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:19:35.708536",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:19:36.001086",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:19:36.411984",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:20:35.933840",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:20:36.321923",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:20:36.636990",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:20:36.973544",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:21:36.779073",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:21:37.867496",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:21:38.842977",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:21:40.085064",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:23:25.250024",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:23:25.608578",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:23:25.921801",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:23:26.254351",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:24:25.096064",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:24:25.425628",
+    "conviction": 3.56,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:24:25.725175",
+    "conviction": 5.15,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:24:26.043237",
+    "conviction": 5.05,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:25:33.578002",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:25:33.725973",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:25:34.513905",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:25:35.378259",
+    "conviction": 4.8,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:25:37.070558",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:25:41.017313",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:25:41.529423",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:25:42.180742",
+    "conviction": 4.8,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:26:09.388536",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:26:10.268477",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:26:10.770337",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:26:11.980784",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:26:11.999306",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:26:13.196374",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:26:13.219165",
+    "conviction": 4.8,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:26:13.991118",
+    "conviction": 4.8,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:27:09.492787",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:27:09.906365",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:27:10.610478",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:27:11.153477",
+    "conviction": 4.8,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:28:29.139375",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:28:29.144375",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:28:29.148394",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:28:29.397244",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:28:29.928771",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:28:30.082810",
+    "conviction": 4.45,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:28:30.742158",
+    "conviction": 4.45,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:29:14.647059",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:29:16.246550",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:29:17.574087",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:29:17.704863",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:29:18.920707",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:29:19.034131",
+    "conviction": 4.73,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:29:20.605413",
+    "conviction": 4.73,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:29:49.422414",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:29:50.611528",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:29:50.749199",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:29:52.048060",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:29:52.120630",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:29:53.001885",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:29:54.139683",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:29:54.302949",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:29:55.548943",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:29:55.557068",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:29:56.825562",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:29:56.843790",
+    "conviction": 4.73,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:29:57.693985",
+    "conviction": 4.73,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:30:52.804948",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:30:53.188589",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:30:53.626169",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:30:54.004740",
+    "conviction": 4.73,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:32:22.334959",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:32:22.338902",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:32:37.482668",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:32:38.673636",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:32:38.905735",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:32:40.441738",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:32:40.514786",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:32:41.212953",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:32:41.231953",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:32:41.672715",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:33:27.490307",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:33:28.495634",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:33:28.599156",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:33:29.110754",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:33:29.194259",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:33:29.697372",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:33:29.728374",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:33:30.080444",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:34:27.524863",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:34:27.984850",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:34:28.348944",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:34:28.699532",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:34:33.714948",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:34:34.732367",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:34:34.949654",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:34:35.960768",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:34:35.999281",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:34:36.411864",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:34:36.522878",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:34:37.012843",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:35:33.810531",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:35:34.199201",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:35:34.574953",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:35:34.955000",
+    "conviction": 4.06,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:35:58.028817",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:36:16.026211",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:36:16.162152",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:36:16.953127",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:36:17.422914",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:36:20.198315",
+    "conviction": 4.43,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:36:40.197573",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:36:45.156440",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:36:54.063757",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:36:55.322600",
+    "conviction": 4.43,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:37:35.336990",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:37:39.530569",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:37:44.168893",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:37:46.881374",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:37:51.018226",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:37:51.878161",
+    "conviction": 4.43,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:38:25.819980",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:38:32.671827",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:38:35.042434",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:38:39.005522",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:38:42.625470",
+    "conviction": 4.43,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:38:47.460473",
+    "conviction": 4.43,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:39:08.502870",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:39:12.135817",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:39:15.077406",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:39:19.924041",
+    "conviction": 5.01,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:39:22.132743",
+    "conviction": 4.43,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:40:05.454998",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:40:23.823852",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:40:23.895877",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:40:30.524138",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:40:31.868423",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:40:32.150656",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:40:33.767821",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:40:33.816339",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:40:35.041130",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:40:35.072640",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:40:35.730840",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:41:30.274590",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:41:31.110636",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:41:31.894960",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:41:32.714581",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:42:30.606465",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:42:31.761635",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:42:32.839978",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:42:34.028620",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:43:30.540780",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:43:31.498927",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:43:32.433560",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:43:33.379888",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:44:30.571368",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:44:31.554162",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:44:32.527832",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:44:33.479597",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:45:30.498880",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:45:31.530210",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:45:32.436831",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:45:33.376770",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:46:30.569872",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:46:31.563194",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:46:32.478049",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:46:33.447510",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  },
+  {
+    "ticker": "AAPL",
+    "signal": "SELL",
+    "price": 252.82,
+    "timestamp": "2026-03-16T16:48:25.199583",
+    "conviction": 2.8,
+    "stop_loss": 247.76,
+    "take_profit": 265.46
+  },
+  {
+    "ticker": "MSFT",
+    "signal": "SELL",
+    "price": 399.95,
+    "timestamp": "2026-03-16T16:48:25.557640",
+    "conviction": 3.61,
+    "stop_loss": 391.95,
+    "take_profit": 419.95
+  },
+  {
+    "ticker": "TSLA",
+    "signal": "SELL",
+    "price": 395.56,
+    "timestamp": "2026-03-16T16:48:25.891194",
+    "conviction": 5.61,
+    "stop_loss": 387.65,
+    "take_profit": 415.34
+  },
+  {
+    "ticker": "NVDA",
+    "signal": "SELL",
+    "price": 183.22,
+    "timestamp": "2026-03-16T16:48:26.262252",
+    "conviction": 4.46,
+    "stop_loss": 179.56,
+    "take_profit": 192.38
+  }
+]
