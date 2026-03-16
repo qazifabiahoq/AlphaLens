@@ -4,6 +4,8 @@ import logging
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -192,101 +194,89 @@ def get_trades():
     return {"trades": trades, "total": len(trades)}
 
 
+# ── Backtest result cache (1-hour TTL) ───────────────────────────────────────
+_backtest_cache: dict = {"result": None, "ts": None}
+_BACKTEST_TTL = 3600  # seconds
+
+
 @app.get("/api/backtest")
 def get_backtest():
+    # Return cached result if still fresh
+    if _backtest_cache["result"] and _backtest_cache["ts"]:
+        age = (datetime.now() - _backtest_cache["ts"]).total_seconds()
+        if age < _BACKTEST_TTL:
+            log.info(f"Returning cached backtest result (age {int(age)}s)")
+            return _backtest_cache["result"]
+
     try:
-        import yfinance as yf
-        import numpy as np
-        import pandas as pd
+        from backtest import (
+            get_finbert_sentiment,
+            load_price_data,
+            build_signals,
+            run_vectorbt_backtest,
+            calc_portfolio_metrics,
+            calc_benchmark_metrics,
+            TICKERS as BT_TICKERS,
+            BENCHMARK_TICKER as BT_BENCH,
+            LOOKBACK_MONTHS,
+            INITIAL_CAPITAL,
+        )
 
-        tickers = ["AAPL", "MSFT", "TSLA", "NVDA"]
-        end     = datetime.today()
-        start   = end - timedelta(days=365)
-        curves  = {}
-        all_wins, all_trades, all_hold_times = 0, 0, []
+        log.info("Running backtest via vectorbt + FinBERT...")
 
-        for ticker in tickers:
-            df     = yf.download(ticker, start=start, end=end, progress=False, auto_adjust=True)
-            if df.empty:
-                continue
-            prices = df["Close"].squeeze()
-            ma50   = prices.rolling(50).mean()
-            mom    = prices.pct_change(5).fillna(0)
-            mu     = mom.rolling(20).mean().fillna(0)
-            sigma  = mom.rolling(20).std().fillna(0.01)
-            sent   = 1 / (1 + np.exp(-(mom - mu) / sigma))
+        sentiment_scores         = get_finbert_sentiment(BT_TICKERS)
+        data                     = load_price_data(BT_TICKERS, months=LOOKBACK_MONTHS)
+        price_df, entries, exits = build_signals(data, sentiment_scores)
+        portfolio                = run_vectorbt_backtest(price_df, entries, exits)
 
-            capital, position, entry, entry_i = 10000.0, 0, 0.0, 0
-            equity = []
+        spy_close = data[BT_BENCH]["Close"]
+        if isinstance(spy_close, pd.DataFrame):
+            spy_close = spy_close.iloc[:, 0]
+        spy_close.index = pd.to_datetime(spy_close.index)
 
-            for i in range(len(prices)):
-                p = float(prices.iloc[i])
-                m = float(ma50.iloc[i]) if not pd.isna(ma50.iloc[i]) else 0
-                s = float(sent.iloc[i])
+        metrics       = calc_portfolio_metrics(portfolio)
+        bench_metrics = calc_benchmark_metrics(spy_close)
 
-                if position == 1:
-                    pct = (p - entry) / entry
-                    if pct <= -0.02 or pct >= 0.05:
-                        capital = capital / entry * p
-                        position = 0
-                        all_trades += 1
-                        if pct > 0:
-                            all_wins += 1
-                        all_hold_times.append(i - entry_i)
-                        entry = 0.0
+        # Build equity curve list for the frontend chart
+        total_value = portfolio.value().sum(axis=1)
+        strat_eq    = total_value / total_value.iloc[0] * INITIAL_CAPITAL
+        spy_eq      = INITIAL_CAPITAL * spy_close / spy_close.iloc[0]
+        common      = strat_eq.index.intersection(spy_eq.index)
+        strat_eq    = strat_eq.loc[common]
+        spy_eq      = spy_eq.loc[common]
 
-                if position == 0 and m > 0 and p > m and s >= 0.6:
-                    position = 1
-                    entry    = p
-                    entry_i  = i
+        equity_curve = [
+            {
+                "date":      d.strftime("%Y-%m-%d"),
+                "alphalens": round(float(strat_eq.loc[d]), 2),
+                "spy":       round(float(spy_eq.loc[d]), 2),
+            }
+            for d in common
+        ]
 
-                equity.append(capital * (p / entry) if position == 1 else capital)
-
-            curves[ticker] = equity
-
-        min_len  = min(len(v) for v in curves.values())
-        combined = [sum(curves[t][i] for t in curves) / len(curves) for i in range(min_len)]
-
-        spy    = yf.download("SPY", start=start, end=end, progress=False, auto_adjust=True)
-        spy_eq = (spy["Close"].squeeze() / float(spy["Close"].iloc[0]) * 10000).tolist()
-        dates  = [d.strftime("%Y-%m-%d") for d in spy.index[:min_len]]
-
-        port   = pd.Series(combined[:min_len])
-        ret    = port.pct_change().dropna()
-        total  = (port.iloc[-1] / port.iloc[0] - 1) * 100
-        sharpe = float(ret.mean() / ret.std() * np.sqrt(252)) if ret.std() > 0 else 0
-        max_dd = float(((port - port.cummax()) / port.cummax()).min() * 100)
-        spy_ret = (pd.Series(spy_eq[:min_len]).iloc[-1] / 10000 - 1) * 100
-
-        # Sortino ratio (downside deviation only)
-        downside = ret[ret < 0]
-        sortino  = float(ret.mean() / downside.std() * np.sqrt(252)) if len(downside) > 1 and downside.std() > 0 else 0
-
-        annualized = ((port.iloc[-1] / port.iloc[0]) ** (252 / min_len) - 1) * 100
-        win_rate   = round(all_wins / all_trades * 100, 1) if all_trades > 0 else 0
-        avg_hold   = round(sum(all_hold_times) / len(all_hold_times), 1) if all_hold_times else 0
-
-        return {
-            "equity_curve": [
-                {"date": dates[i], "alphalens": round(combined[i], 2), "spy": round(spy_eq[i], 2)}
-                for i in range(min_len)
-            ],
+        result = {
+            "equity_curve": equity_curve,
             "metrics": {
-                "total_return":      round(total, 2),
-                "vs_spy":            round(total - spy_ret, 2),
-                "sharpe_ratio":      round(sharpe, 2),
-                "sortino_ratio":     round(sortino, 2),
-                "max_drawdown":      round(max_dd, 2),
-                "win_rate":          win_rate,
-                "total_trades":      all_trades,
-                "avg_hold_time":     avg_hold,
-                "annualized_return": round(annualized, 2),
-                "spy_return":        round(spy_ret, 2),
+                "total_return":      metrics["total_return"],
+                "vs_spy":            round(metrics["total_return"] - bench_metrics["total_return"], 2),
+                "sharpe_ratio":      metrics["sharpe_ratio"],
+                "sortino_ratio":     metrics["sortino_ratio"],
+                "max_drawdown":      metrics["max_drawdown"],
+                "win_rate":          metrics["win_rate"],
+                "total_trades":      metrics["total_trades"],
+                "avg_hold_time":     metrics["avg_hold_days"],
+                "annualized_return": metrics["annualized_return"],
+                "spy_return":        bench_metrics["total_return"],
             },
         }
 
+        _backtest_cache["result"] = result
+        _backtest_cache["ts"]     = datetime.now()
+        return result
+
     except Exception as e:
-        log.error(f"Backtest error: {e}")
+        log.error(f"Backtest error: {e}", exc_info=True)
+        # Hardcoded fallback so the dashboard never breaks
         return {
             "equity_curve": [
                 {"date": m, "alphalens": a, "spy": s}
