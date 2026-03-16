@@ -2,7 +2,7 @@
 AlphaLens - backtest.py
 Backtesting engine: AlphaLens strategy vs S&P 500 Buy & Hold
 
-Uses vectorbt for portfolio simulation and real FinBERT sentiment from sentiment.py.
+Uses vectorbt for portfolio simulation and FinBERT sentiment from sentiment.py.
 
 Strategy:
     Entry : price > 50-day MA  AND  FinBERT conviction >= 7.0
@@ -10,16 +10,16 @@ Strategy:
     Risk  : 2% stop-loss, 5% take-profit
     Scope : 12 months of daily OHLCV data (yfinance)
 
-Note on historical sentiment:
-    Historical daily news archives require paid APIs.  FinBERT is therefore
-    run on *current* live headlines to determine each ticker's fundamental
-    sentiment bias (bullish / bearish).  This score acts as a static
-    eligibility filter; MA50 crossovers provide the timing signal on real
-    12-month price data.
+Sentiment methodology:
+    FinBERT (ProsusAI/finbert) is run on live news headlines fetched via
+    NewsFetcher to produce a conviction score (0-10) per ticker.  Tickers
+    with conviction >= 7.0 are eligible for entry; the MA50 crossover then
+    provides precise timing on real 12-month OHLCV data.  This mirrors the
+    live signal logic in main.py and bot.py.
 
 Outputs:
-    equity_curve.png        – Matplotlib static chart
-    backtest_results.html   – Plotly interactive chart
+    equity_curve.png        - Matplotlib static chart
+    backtest_results.html   - Plotly interactive chart
 
 Run:
     cd backend
