@@ -84,6 +84,50 @@ AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScr
 | Backtest period | 12 months |
 | Starting capital | $10,000 |
 
+## API Keys
+
+No API keys are required to run AlphaLens.
+
+FinBERT (ProsusAI/finbert) downloads automatically from HuggingFace on first run (~500MB, one time only). yfinance and Yahoo Finance RSS are both free and require no authentication. All data sources are open and key-free.
+
+## LLM Prompt Design
+
+The sentiment agent uses the following prompt template to frame the FinBERT classification task:
+
+```
+You are a financial analyst.
+Classify the following news about {ticker} as POSITIVE, NEUTRAL, or NEGATIVE
+and rate your conviction from 0 (no signal) to 10 (extremely strong signal).
+Headlines:
+{headlines}
+```
+
+This prompt is constructed for explainability and logged with every signal output so the reasoning behind each decision can be audited. In practice, FinBERT does not process the prompt as free text the way a generative LLM would. The template is used to document what the model was asked to evaluate and is included in the API response under `prompt_used`.
+
+FinBERT runs inference on each headline independently and returns a probability distribution across positive, neutral, and negative labels. AlphaLens averages those probabilities across all headlines for a ticker, then converts the dominant label's probability into a conviction score using the formula:
+
+```
+conviction = (dominant_probability * 10) - (neutral_probability * 2)
+```
+
+The penalty for high neutral probability ensures that ambiguous or mixed headlines reduce the conviction score rather than producing a falsely confident signal.
+
+## Backtest Results
+
+Results are generated dynamically by running the backtesting engine. Live results are visible in the Backtest tab of the dashboard after starting the app. Representative metrics from a 12-month run on AAPL, MSFT, TSLA, NVDA vs SPY benchmark:
+
+| Metric | AlphaLens Strategy | SPY Benchmark |
+|--------|--------------------|---------------|
+| Total Return | see dashboard | see dashboard |
+| Annualized Return | see dashboard | see dashboard |
+| Sharpe Ratio | see dashboard | see dashboard |
+| Sortino Ratio | see dashboard | see dashboard |
+| Max Drawdown | see dashboard | see dashboard |
+| Win Rate | see dashboard | - |
+| Total Trades | see dashboard | - |
+
+To generate results: start the backend and open the Backtest tab. The engine runs FinBERT on live headlines for each ticker, builds signals using the same MA50 + conviction thresholds as the live bot, and runs a vectorbt portfolio simulation with stop-loss and take-profit applied. The equity curve chart is also exported as `equity_curve.png` and `equity_curve.html` in the backend folder.
+
 ## The Bigger Picture
 
 Markets price in information. The traders who can process that information fastest and most accurately have a structural edge. For individual traders and small teams, keeping up with news at scale has historically been impractical.
