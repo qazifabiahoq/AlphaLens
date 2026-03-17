@@ -1,18 +1,18 @@
 # AlphaLens
-AI-powered sentiment-driven trading intelligence platform for equity markets.
+AI-powered sentiment-driven stock signal platform for equity markets.
 
-**Course:** MMAI 5090 F — Business Applications of AI II &nbsp;|&nbsp; Noelia Cornejo · Dedan Deus · Emily Bendeck Garay · Qazi Fabia Hoq · Esha Malhi &nbsp;|&nbsp; Dr. Divinus Oppong-Tawiah
+**Course:** MMAI 5090 F - Business Applications of AI II | Noelia Cornejo · Dedan Deus · Emily Bendeck Garay · Qazi Fabia Hoq · Esha Malhi | Dr. Divinus Oppong-Tawiah
 
 ---
 
 **To run locally:**
 
 ```
-# Terminal 1 — backend
+# Terminal 1 - backend
 cd backend
 python -m uvicorn main:app --reload
 
-# Terminal 2 — frontend
+# Terminal 2 - frontend
 npm run dev
 ```
 
@@ -22,53 +22,53 @@ Then open [http://localhost:3000](http://localhost:3000)
 
 ## The Problem
 
-Retail and institutional traders are drowning in financial news. Thousands of headlines are published every hour across earnings reports, analyst upgrades, geopolitical events, and market commentary. Most traders either ignore this signal entirely or rely on gut instinct to interpret it. Neither approach is systematic, and neither is scalable.
+Retail traders are drowning in financial news. Thousands of headlines are published every hour across earnings reports, analyst upgrades, geopolitical events, and market commentary. Most traders either ignore this signal entirely or rely on gut instinct to interpret it. Neither approach is systematic or scalable.
 
-Existing trading tools show you prices. They show you charts. They do not tell you what the market is saying in plain language, how confident to be in a signal, or whether the news actually supports the technical setup. The result is that information asymmetry persists — the traders who can process news fastest win, and everyone else reacts after the move has already happened.
+Existing trading tools show prices and charts. They do not tell you what the market is saying in plain language, how confident to be in a signal, or whether the news actually supports the technical setup. The traders who can process news fastest win, and everyone else reacts after the move has already happened.
 
 AlphaLens was built to close that gap.
 
 ## What AlphaLens Does
 
-AlphaLens is a trading intelligence platform that monitors AAPL, MSFT, TSLA, and NVDA in real time, pulls live financial news for each ticker, scores it with a financial-domain AI model, combines that signal with technical price trend data, and generates a BUY, SELL, or HOLD decision — automatically, every five minutes.
+AlphaLens is a stock signal platform that monitors AAPL, MSFT, TSLA, and NVDA in real time. For each ticker it pulls live financial news headlines, scores them with FinBERT (a financial-domain NLP model), checks whether the current price is above or below the 50-day moving average, and combines those two signals into a BUY, SELL, or HOLD decision.
 
-The user opens a dashboard and sees every tracked ticker with its current sentiment score, conviction level, latest headlines, price data, and trading signal — all updated continuously. When they want to understand why a signal was generated, every contributing factor is visible: the exact headlines that drove the sentiment score, the technical trend confirmation, and the conviction threshold that determined the outcome.
+The user opens a dashboard and sees every tracked ticker with its current sentiment score, conviction level, latest headlines, price data, and trading signal, all updated every 60 seconds. The reasoning behind every signal is visible: how many headlines were analyzed, what the conviction score was, and whether the price trend confirmed or contradicted the sentiment reading.
 
-Behind the dashboard, a live paper trading bot is executing simulated trades based on those signals, tracking open positions with stop-loss and take-profit rules, and logging every decision to a persistent trade history. A full backtesting engine runs the same strategy across twelve months of historical data and compares performance against the S&P 500 benchmark.
+A paper trading bot runs in the background on a 5-minute loop, executing simulated trades when thresholds are met and tracking open positions with stop-loss and take-profit rules. A backtesting engine runs the full strategy across 12 months of historical data and benchmarks the result against the S&P 500.
 
-The platform makes the entire signal chain visible and auditable. That is what separates it from a black box.
+## How the Signal Works
 
-## The Four AI Components
+The signal logic combines two independent inputs.
 
-Rather than sending news headlines to a single model and asking it to make a trading decision, AlphaLens separates the work into four specialized components, each optimized for exactly one job.
+The first input is news sentiment. AlphaLens feeds up to 10 live headlines per ticker into FinBERT, a BERT model fine-tuned specifically on financial text by ProsusAI. Generic sentiment models trained on social media or product reviews perform poorly on financial language, where the same word can be bullish or bearish depending on context. FinBERT was trained on financial news, analyst reports, and earnings calls. The model returns a probability distribution across positive, neutral, and negative labels. AlphaLens converts that into a conviction score from 0 to 10, penalizing ambiguous results where the neutral probability is high. If FinBERT cannot load (no internet or low RAM), a keyword-based fallback keeps the system running.
 
-**The Sentiment Agent** is the AI core. It loads ProsusAI/finbert, a BERT model fine-tuned specifically on financial text, and runs inference on up to ten live headlines per ticker. Generic sentiment models trained on social media or product reviews perform poorly on financial language, where the same word can be bullish or bearish depending on context. FinBERT was trained on financial news, analyst reports, and earnings calls — the exact domain AlphaLens operates in. The agent converts raw probability distributions into a conviction score from 0 to 10, with full explainability: every headline's label and weight is visible in the output. A keyword-based fallback ensures the system keeps running even when the model is unavailable.
+The second input is price trend. AlphaLens fetches 12 months of daily OHLCV data via yfinance and computes the 50-day moving average. If the current price is above the MA50, the trend is bullish. If below, it is not.
 
-**The Market Data Handler** is the data layer. It fetches live news for each ticker from Yahoo Finance RSS feeds with a fifteen-minute cache to avoid rate limiting, and pulls historical OHLCV price data via yfinance for technical calculations. These two data streams — news sentiment and price history — are what the signal engine runs on.
+The decision rule is explicit and deterministic:
 
-**The Trading Signal Engine** is the decision layer. It combines two independent signals: whether the current price is above or below the fifty-day moving average (trend confirmation), and whether the FinBERT conviction score crosses defined thresholds. A BUY signal requires both price above the MA50 and conviction at or above 7.0. A SELL signal triggers if price falls below the MA50 or conviction drops below 3.0. Everything else is HOLD. No single signal dominates — both the AI and the technical picture must agree before a position is entered.
+- **BUY**: price is above the 50-day MA and FinBERT conviction is at or above 7.0 out of 10
+- **SELL**: price is below the 50-day MA, or conviction falls below 3.0
+- **HOLD**: everything else
 
-**The Live Bot** is the execution layer. It runs a continuous loop on a five-minute interval, checks all open positions for stop-loss and take-profit exits, then cycles through each ticker to fetch new news, score sentiment, compute the signal, and execute paper trades when the threshold is met. Every decision is logged to both a file and the terminal. The bot maintains live position state with entry prices, P&L calculations, and full trade history persisted to JSON.
+Neither signal alone is enough to trigger a BUY. Both the AI sentiment reading and the technical trend must agree.
 
-## Why This Architecture
+## The Paper Trading Bot
 
-Separating sentiment analysis, data aggregation, signal computation, and trade execution into distinct components means each one can be tested, debugged, and improved independently. When the sentiment scores change, it is immediately clear whether the issue is in the model, the news feed, or the signal thresholds. When a trade is executed, the full reasoning chain that produced it is already logged.
-
-The architecture also makes the system explainable. Every output — the conviction score, the signal decision, the trade entry — traces back to specific inputs a user can inspect. In trading, explainability is not optional. Decisions need to be understood, reviewed, and justified, not just accepted.
-
-## The Dashboard
-
-The frontend is a live monitoring interface with five sections. The main dashboard shows all four tickers with real-time price data, sentiment scores, signal labels, and the latest headlines that drove the analysis. A watchlist sidebar provides at-a-glance status across the full coverage universe. The strategy tab explains the methodology. The backtest tab shows twelve months of simulated performance against SPY with full statistics. The how it works tab documents the signal logic for any user who wants to understand the system before trusting it.
-
-The dashboard polls the backend every sixty seconds and shows the current NYSE market hours status and a paper trading indicator so it is always clear what mode the system is operating in.
+The bot (`bot.py`) runs a continuous loop every 5 minutes. At each interval it checks all open positions for stop-loss and take-profit exits, then cycles through every ticker: fetches fresh news, scores sentiment with FinBERT, computes the signal, and executes a simulated trade if the threshold is met. Every trade is logged to the terminal, to `alphalens.log`, and persisted in `trades.json`. Position state is tracked in memory with entry prices and P&L calculations updated at each scan.
 
 ## Backtesting
 
-The backtesting engine runs the full strategy — FinBERT sentiment scoring plus MA50 crossover — across twelve months of historical data for all four tickers. It uses vectorbt for portfolio simulation with the same stop-loss and take-profit parameters as the live bot. Output includes total return, annualized return, Sharpe ratio, Sortino ratio, maximum drawdown, win rate, and trade count, all benchmarked against the S&P 500. Results are rendered as both a static equity curve chart and an interactive Plotly visualization.
+The backtesting engine runs the same strategy across 12 months of historical data for all four tickers using vectorbt for portfolio simulation. FinBERT scores live headlines at the time of the backtest run as a proxy for historical sentiment. Results are benchmarked against SPY and include total return, annualized return, Sharpe ratio, Sortino ratio, maximum drawdown, win rate, and total trade count. The output includes an equity curve rendered as both a static Matplotlib chart and an interactive Plotly visualization.
+
+## The Dashboard
+
+The frontend is a live monitoring interface with five tabs. The main dashboard shows all four tickers with real-time price data, sentiment scores, signal labels, and the latest headlines that drove each analysis. A watchlist sidebar gives at-a-glance status across the full coverage universe. The strategy tab explains the methodology. The backtest tab shows 12 months of simulated performance against SPY. The how-it-works tab documents the signal logic.
+
+The dashboard polls the backend every 60 seconds and displays the current NYSE market hours status and a paper trading indicator so it is always clear what mode the system is operating in.
 
 ## Technical Stack
 
-AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScript and TailwindCSS, and a Python FastAPI backend. AI inference runs on ProsusAI/finbert via HuggingFace Transformers with PyTorch. Market data comes from yfinance and Yahoo Finance RSS. Backtesting runs on vectorbt. Charts use Recharts on the frontend and Matplotlib plus Plotly on the backend. Trade state is persisted to JSON. All API credentials are stored server-side only.
+AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScript and TailwindCSS, and a Python FastAPI backend. Sentiment analysis runs on ProsusAI/finbert via HuggingFace Transformers with PyTorch. Market data and price history come from yfinance. News headlines are fetched from Yahoo Finance RSS with a 15-minute cache. Backtesting runs on vectorbt. Charts use Recharts on the frontend and Matplotlib plus Plotly on the backend. Trade state is persisted to JSON. All processing happens server-side.
 
 **Strategy parameters:**
 
@@ -76,8 +76,8 @@ AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScr
 |-----------|-------|
 | Tickers | AAPL, MSFT, TSLA, NVDA |
 | MA window | 50 days |
-| BUY conviction threshold | ≥ 7.0 / 10 |
-| SELL conviction threshold | < 3.0 / 10 |
+| BUY conviction threshold | 7.0 / 10 or above |
+| SELL conviction threshold | below 3.0 / 10 |
 | Stop-loss | 2% per trade |
 | Take-profit | 5% per trade |
 | Bot scan interval | 5 minutes |
@@ -86,14 +86,14 @@ AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScr
 
 ## The Bigger Picture
 
-Markets price in information. The traders and systems that process information fastest and most accurately have a structural edge. For individual traders and small teams, that has historically meant falling behind institutions with dedicated research desks and proprietary data feeds.
+Markets price in information. The traders who can process that information fastest and most accurately have a structural edge. For individual traders and small teams, keeping up with news at scale has historically been impractical.
 
-AlphaLens demonstrates that the core of the information processing workflow — reading financial news, interpreting sentiment, confirming against technical structure, and generating an actionable signal — can be fully automated with open-source tools and publicly available data. FinBERT brings financial NLP accuracy that was previously accessible only to well-resourced teams. vectorbt brings institutional-grade backtesting to a Python backend. The combination produces a platform that any team can run, inspect, and build on.
+AlphaLens demonstrates that financial sentiment analysis with a domain-specific NLP model can be integrated with standard technical analysis rules to produce an automated, explainable signal pipeline. FinBERT brings financial NLP accuracy that would otherwise require significant resources to replicate. vectorbt brings institutional-grade backtesting to a Python backend. The combination produces a platform that is transparent about every decision it makes, which matters in trading as much as the decisions themselves.
 
-A signal that used to require reading dozens of headlines and cross-referencing price charts now takes five minutes of automated processing. That is the whole point.
+A signal that used to require reading dozens of headlines and cross-referencing price charts now happens automatically. That is the whole point.
 
 ---
 
 **Team:** Noelia Cornejo · Dedan Deus · Emily Bendeck Garay · Qazi Fabia Hoq · Esha Malhi
 
-Course: MMAI 5090 F — Business Applications of AI II | Instructor: Dr. Divinus Oppong-Tawiah
+Course: MMAI 5090 F - Business Applications of AI II | Instructor: Dr. Divinus Oppong-Tawiah
