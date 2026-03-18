@@ -418,10 +418,10 @@ function DashboardTab({
           </div>
           <div className="grid grid-cols-4 gap-4 mb-6">
             {[
-              { label: 'RSI (14)', value: currentData.rsi != null ? currentData.rsi.toFixed(1) : '—' },
-              { label: 'ATR (14)', value: currentData.atr != null ? `$${currentData.atr.toFixed(2)}` : '—' },
-              { label: 'STOP LOSS', value: currentData.stop_loss != null ? `$${currentData.stop_loss.toFixed(2)}` : '—' },
-              { label: 'TAKE PROFIT', value: currentData.take_profit != null ? `$${currentData.take_profit.toFixed(2)}` : '—' },
+              { label: 'RSI (14)', value: currentData.rsi != null ? currentData.rsi.toFixed(1) : 'N/A' },
+              { label: 'ATR (14)', value: currentData.atr != null ? `$${currentData.atr.toFixed(2)}` : 'N/A' },
+              { label: 'STOP LOSS', value: currentData.stop_loss != null ? `$${currentData.stop_loss.toFixed(2)}` : 'N/A' },
+              { label: 'TAKE PROFIT', value: currentData.take_profit != null ? `$${currentData.take_profit.toFixed(2)}` : 'N/A' },
             ].map((metric) => (
               <div key={metric.label} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-3">
                 <div className="font-sans text-[10px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">{metric.label}</div>
@@ -633,20 +633,20 @@ function StrategyTab() {
           How AlphaLens Generates Trading Decisions
         </h2>
         <p className="font-sans text-[14px] text-[var(--text-secondary)] mb-8">
-          All 4 entry conditions must pass simultaneously. Any single failure produces a HOLD. This prevents the bot from acting on partial signals — the most common cause of systematic trading losses.
+          All 4 entry conditions must pass simultaneously. Any single failure produces a HOLD. This prevents the bot from acting on partial signals, the most common cause of systematic trading losses.
         </p>
 
         <div className="grid grid-cols-2 gap-6 mb-6">
           <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
             <div className="mb-3 flex items-center gap-3">
-              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 1 — TREND</span>
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 1: TREND</span>
             </div>
             <h3 className="font-sans text-[16px] font-semibold text-white mb-3">Price Above 50-Day MA</h3>
             <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
-              The 50-day moving average is called the institutional line. When price is above it, the majority of investors who bought in the last 50 days are sitting on profit — they have no reason to panic-sell, and momentum is on your side. Buying below the 50MA means fighting the trend. Every professional trader checks this first.
+              The 50-day moving average is called the institutional line. When price is above it, the majority of investors who bought in the last 50 days are sitting on profit; they have no reason to panic-sell, and momentum is on your side. Buying below the 50MA means fighting the trend. Every professional trader checks this first.
             </p>
             <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
-              Why not the 200-day? The 200MA is a long-term signal — too slow for a news-driven strategy. The 50MA responds to trend shifts in weeks, not months, which matches our 5-minute polling cycle.
+              Why not the 200-day? The 200MA is a long-term signal, too slow for a news-driven strategy. The 50MA responds to trend shifts in weeks, not months, which matches our 5-minute polling cycle.
             </p>
             <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
               price {'>'} MA(50) = True
@@ -655,14 +655,14 @@ function StrategyTab() {
 
           <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
             <div className="mb-3">
-              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 2 — MOMENTUM</span>
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 2: MOMENTUM</span>
             </div>
             <h3 className="font-sans text-[16px] font-semibold text-white mb-3">RSI Between 30 and 70</h3>
             <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
-              RSI (Relative Strength Index) measures how fast a stock is moving relative to itself. Above 70 means the stock has already run hard — you would be buying at the top, paying someone else's profit. Below 30 means the stock is still falling and no one knows where it stops (catching a falling knife). The 30–70 band is the healthy zone: the stock has real momentum but hasn't overextended.
+              RSI (Relative Strength Index) measures how fast a stock is moving relative to itself. Above 70 means the stock has already run hard; you would be buying at the top, paying someone else's profit. Below 30 means the stock is still falling and no one knows where it stops (catching a falling knife). The 30-70 band is the healthy zone: the stock has real momentum but has not overextended.
             </p>
             <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
-              Without RSI, a trend-following bot will buy stocks that already surged 15% on news — right before they pull back. RSI prevents chasing.
+              Without RSI, a trend-following bot will buy stocks that already surged 15% on news, right before they pull back. RSI prevents chasing.
             </p>
             <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
               30 {'<='} RSI(14) {'<='} 70 = True
@@ -671,11 +671,11 @@ function StrategyTab() {
 
           <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
             <div className="mb-3">
-              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 3 — VOLUME</span>
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 3: VOLUME</span>
             </div>
             <h3 className="font-sans text-[16px] font-semibold text-white mb-3">Volume ≥ 1.1× 20-Day Average</h3>
             <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
-              Price moves on low volume are unreliable. If a stock rises 2% but only a handful of trades happened, the move can reverse the moment one large seller appears. When volume is above its 20-day average, it means real market participation — institutions, funds, and retail traders are all involved. That price move will hold.
+              Price moves on low volume are unreliable. If a stock rises 2% but only a handful of trades happened, the move can reverse the moment one large seller appears. When volume is above its 20-day average, it means real market participation: institutions, funds, and retail traders are all involved. That price move will hold.
             </p>
             <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
               Volume is the market's conviction score. High volume on an up day = real demand. High volume on a down day = real selling pressure. We only enter when the buying side has the evidence.
@@ -687,14 +687,14 @@ function StrategyTab() {
 
           <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
             <div className="mb-3">
-              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 4 — AI SENTIMENT</span>
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 4: AI SENTIMENT</span>
             </div>
             <h3 className="font-sans text-[16px] font-semibold text-white mb-3">FinBERT Conviction ≥ 7.0 / 10</h3>
             <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
-              This is the AI layer. FinBERT reads financial news the same way a research analyst would — understanding context and nuance, not just keywords. "Apple misses estimates" and "Apple beats estimates" share most of the same words, but FinBERT classifies them correctly. A score of 7.0+ means strongly positive signals across multiple headlines, not just one.
+              This is the AI layer. FinBERT reads financial news the same way a research analyst would, understanding context and nuance, not just keywords. "Apple misses estimates" and "Apple beats estimates" share most of the same words, but FinBERT classifies them correctly. A score of 7.0+ means strongly positive signals across multiple headlines, not just one.
             </p>
             <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
-              Why 7.0 and not 5.0? A score of 5 means the AI is uncertain — close to neutral. We need the AI to be confident, not just slightly positive. The 7.0 threshold filters noise and focuses on stories with real market impact.
+              Why 7.0 and not 5.0? A score of 5 means the AI is uncertain, close to neutral. We need the AI to be confident, not just slightly positive. The 7.0 threshold filters noise and focuses on stories with real market impact.
             </p>
             <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
               finbert_conviction {'>'}{'>'}= 7.0 = True
@@ -715,7 +715,7 @@ function StrategyTab() {
       <div className="mb-12">
         <h2 className="font-sans text-[20px] font-semibold text-white mb-2">EXIT CONDITIONS</h2>
         <p className="font-sans text-[13px] text-[var(--text-secondary)] mb-6">
-          Positions are monitored continuously. Any single exit condition closes the trade immediately — no waiting.
+          Positions are monitored continuously. Any single exit condition closes the trade immediately. No waiting.
         </p>
         <div className="grid grid-cols-3 gap-4 mb-4">
           {[
@@ -732,7 +732,7 @@ function StrategyTab() {
             {
               label: 'Sentiment Collapse',
               trigger: 'Conviction < 3.0',
-              desc: 'The AI detects a shift to negative news coverage mid-position. News-driven positions must be exited when the news turns — this is the entire premise of the system.',
+              desc: 'The AI detects a shift to negative news coverage mid-position. News-driven positions must be exited when the news turns. This is the entire premise of the system.',
             },
           ].map((item) => (
             <div key={item.label} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-4">
@@ -745,9 +745,9 @@ function StrategyTab() {
       </div>
 
       <div className="mb-12">
-        <h2 className="font-sans text-[20px] font-semibold text-white mb-2">RISK MANAGEMENT — ATR-BASED</h2>
+        <h2 className="font-sans text-[20px] font-semibold text-white mb-2">RISK MANAGEMENT: ATR-BASED</h2>
         <p className="font-sans text-[13px] text-[var(--text-secondary)] mb-6">
-          Stop-loss and take-profit are calculated from ATR (Average True Range) — not fixed percentages. ATR measures how much a stock typically moves in a single day. TSLA moves ~$8/day. MSFT moves ~$3/day. A 2% fixed stop treats them identically — which is wrong. ATR-based levels respect each stock's own volatility personality.
+          Stop-loss and take-profit are calculated from ATR (Average True Range), not fixed percentages. ATR measures how much a stock typically moves in a single day. TSLA moves ~$8/day. MSFT moves ~$3/day. A 2% fixed stop treats them identically, which is wrong. ATR-based levels respect each stock's own volatility personality.
         </p>
 
         <div className="grid grid-cols-3 gap-4">
@@ -760,7 +760,7 @@ function StrategyTab() {
             {
               label: 'Take-Profit',
               value: '3.0 × ATR',
-              desc: 'Entry price plus 3× the ATR. This creates a 2:1 reward-to-risk ratio on every trade — a professional standard. Win half your trades and still come out ahead.',
+              desc: 'Entry price plus 3x the ATR. This creates a 2:1 reward-to-risk ratio on every trade, a professional standard. Win half your trades and still come out ahead.',
             },
             {
               label: 'Conviction Floor',
@@ -1111,7 +1111,7 @@ function HowItWorksTab() {
       <div className="mb-16">
         <h2 className="font-sans text-[24px] font-bold text-white mb-2">THE RULE-BASED ENGINE</h2>
         <p className="font-sans text-[14px] text-[var(--text-secondary)] mb-8">
-          Every trade decision passes through four deterministic filters. These are not suggestions — they are hard gates written in Python. If any gate returns False, the signal is HOLD regardless of how strong the others are.
+          Every trade decision passes through four deterministic filters. These are hard gates written in Python. If any gate returns False, the signal is HOLD regardless of how strong the others are.
         </p>
 
         <div className="space-y-4">
@@ -1119,25 +1119,25 @@ function HowItWorksTab() {
             {
               rule: '50-Day Moving Average',
               gate: 'price > MA(50)',
-              why: 'The MA50 is the most widely watched trend line by professional and institutional traders. When price is above it, the crowd is on your side — the last 50 days of buyers are in profit and not panic-selling. Buying below the MA means betting against the prevailing trend, which statistically loses more often than it wins. This is the first question any experienced trader asks: "Is this stock in an uptrend?"',
+              why: 'The MA50 is the most widely watched trend line by professional and institutional traders. When price is above it, the crowd is on your side: the last 50 days of buyers are in profit and not panic-selling. Buying below the MA means betting against the prevailing trend, which statistically loses more often than it wins. This is the first question any experienced trader asks: "Is this stock in an uptrend?"',
               tag: 'TREND FILTER',
             },
             {
               rule: 'RSI Between 30 and 70',
               gate: '30 ≤ RSI(14) ≤ 70',
-              why: 'RSI tells you how fast and how far a stock has moved relative to its own history. Above 70 = the stock is overbought — it has already had its run, and you are buying at the peak right before a pullback. Below 30 = oversold — the stock is still falling and there is no floor yet. The 30–70 zone is where stocks have healthy upward momentum without being stretched. This single rule prevents the most common retail trading mistake: chasing a stock after it already moved.',
+              why: 'RSI tells you how fast and how far a stock has moved relative to its own history. Above 70 means the stock is overbought; it has already had its run and you are buying at the peak right before a pullback. Below 30 means oversold; the stock is still falling and there is no floor yet. The 30-70 zone is where stocks have healthy upward momentum without being stretched. This single rule prevents the most common retail trading mistake: chasing a stock after it already moved.',
               tag: 'MOMENTUM FILTER',
             },
             {
               rule: 'Volume ≥ 1.1× 20-Day Average',
               gate: 'volume / avg_vol(20) ≥ 1.1',
-              why: 'Price without volume is a rumor. Volume is the market\'s vote of confidence. When more shares than usual are trading on an up day, it means real buyers — institutions, funds, large accounts — are participating. A stock that moves 2% on half its normal volume can reverse the moment one big seller appears. A stock that moves on 1.5× volume is being accumulated. Volume confirms the move is real, not a thin-market illusion.',
+              why: 'Price without volume is a rumor. Volume is the market\'s vote of confidence. When more shares than usual are trading on an up day, it means real buyers (institutions, funds, large accounts) are participating. A stock that moves 2% on half its normal volume can reverse the moment one big seller appears. A stock that moves on 1.5x volume is being accumulated. Volume confirms the move is real, not a thin-market illusion.',
               tag: 'CONFIRMATION FILTER',
             },
             {
               rule: 'FinBERT Conviction ≥ 7.0',
               gate: 'finbert_score ≥ 7.0 / 10',
-              why: 'This is the AI edge. FinBERT is trained on financial documents and understands sentiment the way a research analyst does — it knows "Apple misses estimates" is bad even though "misses" is just one word. A score of 7.0+ means the model found strongly positive signals across multiple recent headlines, not just a single ambiguous story. Scores of 5–6 are too noisy — the market has already priced in neutral news. We need the AI to be confident, not just slightly optimistic.',
+              why: 'This is the AI edge. FinBERT is trained on financial documents and understands sentiment the way a research analyst does. It knows "Apple misses estimates" is bad even though "misses" is just one word. A score of 7.0+ means the model found strongly positive signals across multiple recent headlines, not just a single ambiguous story. Scores of 5-6 are too noisy; the market has already priced in neutral news. We need the AI to be confident, not just slightly optimistic.',
               tag: 'AI SENTIMENT FILTER',
             },
           ].map((item) => (
@@ -1201,20 +1201,24 @@ function HowItWorksTab() {
           </div>
 
           <div className="flex items-center gap-4">
-            {['SentimentAgent / FinBERT', 'Signal Generator', 'Execution Engine', 'Paper Simulation'].map(
-              (box, idx) => (
-                <div key={box} className="flex items-center flex-1">
-                  <div className="border border-[var(--border-bright)] bg-[var(--bg-surface)] rounded-sm px-4 py-3 flex-1 text-center">
-                    <span className="font-mono text-[10px] text-white">{box}</span>
-                  </div>
-                  {idx < 3 && (
-                    <div className="px-2">
-                      <div className="w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-[var(--accent)]" />
-                    </div>
-                  )}
+            {[
+              { label: 'SentimentAgent / FinBERT', sub: 'AI Brain' },
+              { label: 'Rule Engine', sub: 'MA50 + RSI + Volume' },
+              { label: 'Signal Generator', sub: 'BUY / HOLD / SELL' },
+              { label: 'Execution + ATR Risk', sub: 'SL / TP / Sizing' },
+            ].map((box, idx) => (
+              <div key={box.label} className="flex items-center flex-1">
+                <div className="border border-[var(--border-bright)] bg-[var(--bg-surface)] rounded-sm px-4 py-3 flex-1 text-center">
+                  <span className="font-mono text-[10px] text-white block">{box.label}</span>
+                  <span className="font-sans text-[9px] text-[var(--text-secondary)] block mt-0.5">{box.sub}</span>
                 </div>
-              )
-            )}
+                {idx < 3 && (
+                  <div className="px-2">
+                    <div className="w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-[var(--accent)]" />
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </div>
