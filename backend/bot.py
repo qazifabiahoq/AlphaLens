@@ -1,15 +1,23 @@
 """
 AlphaLens - bot.py
-LLM-Driven Automated Trading Agent (yfinance + Paper Simulation)
+Rule-Based + Sentiment Trading Bot (yfinance + Paper Simulation)
 
-Runs a continuous loop every 5 minutes:
-    1. Fetch live price data via yfinance
-    2. Compute 50-day moving average trend
-    3. Fetch news headlines via NewsFetcher (Yahoo Finance RSS)
-    4. Score sentiment with FinBERT via SentimentAgent
-    5. Generate BUY / SELL / HOLD signal
-    6. Execute paper trade (logged to alphalens.log + trades.json)
-    7. Monitor open positions for stop-loss / take-profit exits
+Entry requires ALL 4 conditions:
+    1. Price > 50-day MA         — stock must be in an uptrend
+    2. RSI(14) between 30–70     — not overbought, not a falling knife
+    3. Volume ≥ 1.1× 20-day avg  — real buying pressure behind the move
+    4. FinBERT conviction ≥ 7.0  — AI confirms strongly positive news
+
+Exit on ANY condition:
+    1. Price drops below 50-day MA    — trend broken
+    2. RSI(14) rises above 75         — overbought, take profit
+    3. FinBERT conviction < 3.0       — sentiment turned negative
+    4. Stop-loss: entry − 1.5×ATR(14) — volatility-adjusted floor
+    5. Take-profit: entry + 3×ATR(14) — 2:1 reward-to-risk target
+
+Position sizing:
+    Risk 1% of portfolio per trade.
+    Qty = floor((portfolio × 1%) / (1.5 × ATR))  — bet less on volatile stocks.
 
 Setup:
     pip install -r requirements.txt
@@ -21,6 +29,10 @@ import time
 import logging
 from datetime import datetime
 from pathlib import Path
+from math import floor
+
+import numpy as np
+import pandas as pd
 
 from sentiment import SentimentAgent
 from market_data import MarketDataHandler
@@ -36,15 +48,56 @@ logging.basicConfig(
 )
 log = logging.getLogger("AlphaLens")
 
-# ── Config ────────────────────────────────────────────────────────────────────
+# ── Strategy config ───────────────────────────────────────────────────────────
 TICKERS           = ["AAPL", "MSFT", "TSLA", "NVDA"]
-MA_WINDOW         = 50      # 50-day moving average
-SENTIMENT_THRESH  = 7.0     # Min FinBERT conviction (0-10) to enter
-STOP_LOSS_PCT     = 0.02    # 2% stop-loss
-TAKE_PROFIT_PCT   = 0.05    # 5% take-profit
-TRADE_QTY         = 1       # Shares per order
-POLL_INTERVAL_SEC = 300     # Seconds between scans (5 min)
+
+MA_WINDOW         = 50      # 50-day simple moving average (trend filter)
+RSI_PERIOD        = 14      # Standard RSI lookback
+RSI_BUY_MIN       = 30      # Below 30 = falling knife
+RSI_BUY_MAX       = 70      # Above 70 = overbought / don't chase
+RSI_EXIT          = 75      # Exit existing position when overbought
+
+ATR_PERIOD        = 14      # ATR lookback for volatility-adjusted levels
+ATR_SL_MULT       = 1.5     # Stop-loss = entry − 1.5 × ATR
+ATR_TP_MULT       = 3.0     # Take-profit = entry + 3 × ATR (2:1 R/R)
+
+VOLUME_MA         = 20      # Rolling window for average volume
+VOLUME_MIN        = 1.1     # Volume must be ≥ 1.1× the 20-day average
+
+SENTIMENT_THRESH  = 7.0     # Min FinBERT conviction to enter (0–10 scale)
+SENTIMENT_EXIT    = 3.0     # Exit when conviction drops below this
+
+PORTFOLIO_VALUE   = 10_000  # Paper portfolio size ($)
+RISK_PER_TRADE    = 0.01    # Risk 1% of portfolio per trade
+
+POLL_INTERVAL_SEC = 300     # Seconds between full scans (5 min)
 TRADES_FILE       = Path("trades.json")
+
+
+# ── Indicator helpers ─────────────────────────────────────────────────────────
+def _calc_rsi(close: pd.Series, period: int = RSI_PERIOD) -> float:
+    """Wilder's RSI. Returns 50 if not enough data."""
+    delta    = close.diff()
+    gain     = delta.clip(lower=0)
+    loss     = (-delta).clip(lower=0)
+    avg_gain = gain.ewm(alpha=1 / period, min_periods=period).mean()
+    avg_loss = loss.ewm(alpha=1 / period, min_periods=period).mean()
+    rs       = avg_gain / avg_loss.replace(0, np.nan)
+    rsi      = 100 - (100 / (1 + rs))
+    val      = float(rsi.iloc[-1])
+    return val if val == val else 50.0
+
+
+def _calc_atr(df: pd.DataFrame, period: int = ATR_PERIOD) -> float:
+    """Average True Range — measures how much a stock moves day-to-day."""
+    high, low, close = df["High"], df["Low"], df["Close"]
+    prev_close = close.shift(1)
+    tr = pd.concat(
+        [high - low, (high - prev_close).abs(), (low - prev_close).abs()],
+        axis=1,
+    ).max(axis=1)
+    val = float(tr.rolling(period).mean().iloc[-1])
+    return val if val == val else 1.0
 
 
 def _load_trades() -> list:
@@ -59,127 +112,179 @@ def _save_trade(record: dict):
     TRADES_FILE.write_text(json.dumps(trades, indent=2))
 
 
+# ── Bot ───────────────────────────────────────────────────────────────────────
 class AlphaLensBot:
     """
-    Core trading bot.
-
-    Signal logic:
-        BUY  — price > 50-day MA  AND  FinBERT conviction >= SENTIMENT_THRESH
-        SELL — in position AND (stop-loss hit | take-profit hit | conviction < 3)
-        HOLD — all other cases
-
-    Execution: paper simulation logged to alphalens.log and trades.json.
+    4-condition entry / 5-condition exit paper trading bot.
+    Positions: {ticker: {qty, entry_price, stop_loss, take_profit}}
     """
 
     def __init__(self):
         self.agent     = SentimentAgent()
         self.market    = MarketDataHandler()
-        self.positions: dict = {}   # { ticker: { qty, entry_price } }
-        log.info("AlphaLens Bot initialized — yfinance data source")
+        self.positions: dict = {}
+        log.info("AlphaLens Bot initialized — 4-condition rule engine")
 
-    # ── Market indicators ─────────────────────────────────────────────────────
-    def _current_price(self, ticker: str) -> float:
-        df = self.market.get_historical(ticker, period="5d")
-        return float(df["Close"].iloc[-1]) if df is not None else 0.0
-
-    def _above_50ma(self, ticker: str) -> tuple[bool, float, float]:
-        """Returns (above_ma, price, ma50_value)."""
+    # ── Compute indicators ────────────────────────────────────────────────────
+    def _compute_indicators(self, ticker: str) -> dict | None:
         df = self.market.get_historical(ticker, period="1y")
-        if df is None or len(df) < MA_WINDOW:
-            return False, 0.0, 0.0
-        price = float(df["Close"].iloc[-1])
-        ma    = float(df["Close"].rolling(MA_WINDOW).mean().iloc[-1])
-        log.info(f"  {ticker}  price={price:.2f}  50MA={ma:.2f}  above={price > ma}")
-        return price > ma, price, ma
+        if df is None or len(df) < MA_WINDOW + 5:
+            return None
+
+        close   = df["Close"]
+        price   = float(close.iloc[-1])
+        ma50    = float(close.rolling(MA_WINDOW).mean().iloc[-1])
+        rsi     = _calc_rsi(close)
+        atr     = _calc_atr(df)
+        vol_avg = float(df["Volume"].rolling(VOLUME_MA).mean().iloc[-1])
+        vol_now = float(df["Volume"].iloc[-1])
+        vol_ratio = vol_now / vol_avg if vol_avg else 1.0
+
+        return {
+            "price":     price,
+            "ma50":      ma50,
+            "rsi":       rsi,
+            "atr":       atr,
+            "vol_ratio": vol_ratio,
+        }
 
     # ── Signal generation ─────────────────────────────────────────────────────
     def generate_signal(self, ticker: str) -> dict:
-        headlines            = self.market.get_news(ticker)
-        sentiment            = self.agent.analyze(ticker, headlines)
-        trend_ok, price, ma  = self._above_50ma(ticker)
+        headlines = self.market.get_news(ticker)
+        sentiment = self.agent.analyze(ticker, headlines)
+        ind       = self._compute_indicators(ticker)
 
-        if trend_ok and sentiment["score"] >= SENTIMENT_THRESH:
+        if ind is None:
+            return {"ticker": ticker, "signal": "HOLD", "price": 0.0,
+                    "atr": 1.0, "stop_loss": 0.0, "take_profit": 0.0,
+                    "sentiment": sentiment}
+
+        price    = ind["price"]
+        atr      = ind["atr"]
+        sl_price = round(price - ATR_SL_MULT * atr, 2)
+        tp_price = round(price + ATR_TP_MULT * atr, 2)
+
+        # Entry: all 4 must pass
+        trend_ok  = price > ind["ma50"]
+        rsi_ok    = RSI_BUY_MIN <= ind["rsi"] <= RSI_BUY_MAX
+        volume_ok = ind["vol_ratio"] >= VOLUME_MIN
+        sent_ok   = sentiment["score"] >= SENTIMENT_THRESH
+        entry_ok  = trend_ok and rsi_ok and volume_ok and sent_ok
+
+        # Exit: any one triggers sell
+        any_exit = (
+            not trend_ok
+            or ind["rsi"] > RSI_EXIT
+            or sentiment["score"] < SENTIMENT_EXIT
+        )
+
+        if entry_ok and ticker not in self.positions:
             signal = "BUY"
-        elif not trend_ok or sentiment["score"] < 3.0:
+        elif any_exit and ticker in self.positions:
             signal = "SELL"
         else:
             signal = "HOLD"
 
+        log.info(
+            f"  {ticker}  ${price:.2f}  MA50=${ind['ma50']:.2f}  "
+            f"RSI={ind['rsi']:.1f}  vol={ind['vol_ratio']:.2f}x  "
+            f"sent={sentiment['score']:.1f}/10  → {signal}"
+        )
+
         return {
-            "ticker":    ticker,
-            "price":     price,
-            "ma50":      ma,
-            "signal":    signal,
-            "sentiment": sentiment,
-            "trend_ok":  trend_ok,
-            "timestamp": datetime.now().isoformat(),
+            "ticker":      ticker,
+            "price":       price,
+            "signal":      signal,
+            "sentiment":   sentiment,
+            "indicators":  ind,
+            "trend_ok":    trend_ok,
+            "rsi_ok":      rsi_ok,
+            "volume_ok":   volume_ok,
+            "sent_ok":     sent_ok,
+            "stop_loss":   sl_price,
+            "take_profit": tp_price,
+            "atr":         atr,
+            "timestamp":   datetime.now().isoformat(),
         }
 
-    # ── Paper trade execution ─────────────────────────────────────────────────
-    def _execute_paper_order(self, ticker: str, side: str, qty: int, price: float):
-        sl_price = round(price * (1 - STOP_LOSS_PCT), 2)
-        tp_price = round(price * (1 + TAKE_PROFIT_PCT), 2)
-        record = {
+    # ── Position sizing (ATR-based) ───────────────────────────────────────────
+    def _calc_qty(self, atr: float) -> int:
+        dollar_risk   = PORTFOLIO_VALUE * RISK_PER_TRADE   # e.g. $100
+        stop_distance = ATR_SL_MULT * atr
+        qty           = floor(dollar_risk / stop_distance) if stop_distance > 0 else 1
+        return max(1, qty)
+
+    # ── Paper execution ───────────────────────────────────────────────────────
+    def _execute_paper_order(self, ticker: str, side: str, qty: int, price: float,
+                              sl: float | None = None, tp: float | None = None):
+        _save_trade({
             "ticker":      ticker,
             "side":        side,
             "qty":         qty,
             "price":       round(price, 2),
-            "stop_loss":   sl_price if side == "buy" else None,
-            "take_profit": tp_price if side == "buy" else None,
+            "stop_loss":   sl,
+            "take_profit": tp,
             "timestamp":   datetime.now().isoformat(),
             "signal":      side.upper(),
-        }
-        _save_trade(record)
-        log.info(
-            f"  [PAPER] {side.upper()} {qty} {ticker} @ ${price:.2f} | "
-            f"SL=${sl_price}  TP=${tp_price}"
-        )
+        })
+        if side == "buy":
+            log.info(
+                f"  [PAPER] BUY {qty} {ticker} @ ${price:.2f} | "
+                f"SL=${sl}  TP=${tp}  (ATR-based, 2:1 R/R)"
+            )
+        else:
+            log.info(f"  [PAPER] SELL {qty} {ticker} @ ${price:.2f}")
 
     def execute(self, sig: dict):
-        ticker = sig["ticker"]
-        signal = sig["signal"]
-        price  = sig["price"]
+        ticker, signal, price = sig["ticker"], sig["signal"], sig["price"]
 
         if signal == "BUY" and ticker not in self.positions:
-            self._execute_paper_order(ticker, "buy", TRADE_QTY, price)
-            self.positions[ticker] = {"qty": TRADE_QTY, "entry_price": price}
+            qty = self._calc_qty(sig["atr"])
+            self._execute_paper_order(ticker, "buy", qty, price,
+                                       sl=sig["stop_loss"], tp=sig["take_profit"])
+            self.positions[ticker] = {
+                "qty":         qty,
+                "entry_price": price,
+                "stop_loss":   sig["stop_loss"],
+                "take_profit": sig["take_profit"],
+            }
 
         elif signal == "SELL" and ticker in self.positions:
-            entry = self.positions.pop(ticker)["entry_price"]
-            pnl   = (price - entry) / entry * 100
-            self._execute_paper_order(ticker, "sell", TRADE_QTY, price)
+            pos = self.positions.pop(ticker)
+            pnl = (price - pos["entry_price"]) / pos["entry_price"] * 100
+            self._execute_paper_order(ticker, "sell", pos["qty"], price)
             log.info(f"  Closed {ticker} | PnL: {pnl:+.2f}%")
 
         else:
             log.info(f"  {ticker} → HOLD")
 
-    # ── Intra-position risk management ────────────────────────────────────────
+    # ── ATR-based SL/TP monitoring ────────────────────────────────────────────
     def check_risk_exits(self):
         for ticker, pos in list(self.positions.items()):
-            price = self._current_price(ticker)
-            entry = pos["entry_price"]
-            pct   = (price - entry) / entry
+            df = self.market.get_historical(ticker, period="5d")
+            if df is None:
+                continue
+            price = float(df["Close"].iloc[-1])
 
-            if pct <= -STOP_LOSS_PCT:
-                log.warning(f"  STOP-LOSS triggered {ticker} ({pct:.2%})")
+            if price <= pos["stop_loss"]:
+                pct = (price - pos["entry_price"]) / pos["entry_price"] * 100
+                log.warning(f"  STOP-LOSS {ticker} @ ${price:.2f} ({pct:+.2f}%)")
                 self._execute_paper_order(ticker, "sell", pos["qty"], price)
                 del self.positions[ticker]
 
-            elif pct >= TAKE_PROFIT_PCT:
-                log.info(f"  TAKE-PROFIT triggered {ticker} ({pct:.2%})")
+            elif price >= pos["take_profit"]:
+                pct = (price - pos["entry_price"]) / pos["entry_price"] * 100
+                log.info(f"  TAKE-PROFIT {ticker} @ ${price:.2f} ({pct:+.2f}%)")
                 self._execute_paper_order(ticker, "sell", pos["qty"], price)
                 del self.positions[ticker]
 
     # ── Main loop ─────────────────────────────────────────────────────────────
     def run(self):
         log.info("=" * 60)
-        log.info("  AlphaLens Bot — STARTING (Paper Trading Simulation)")
-        log.info(f"  Tickers       : {TICKERS}")
-        log.info(f"  Data source   : yfinance + Yahoo Finance RSS")
-        log.info(f"  Sentiment     : FinBERT (ProsusAI/finbert)")
-        log.info(f"  Strategy      : price > MA{MA_WINDOW} AND conviction >= {SENTIMENT_THRESH}")
-        log.info(f"  Risk          : SL={STOP_LOSS_PCT*100:.0f}%  TP={TAKE_PROFIT_PCT*100:.0f}%")
-        log.info(f"  Poll interval : {POLL_INTERVAL_SEC}s")
+        log.info("  AlphaLens — 4-Condition Rule-Based + AI Sentiment Bot")
+        log.info(f"  Entry (ALL 4): trend | RSI 30-70 | volume≥1.1x | conviction≥7.0")
+        log.info(f"  Exit (ANY):    trend break | RSI>75 | conviction<3.0 | SL/TP")
+        log.info(f"  Sizing: 1% portfolio risk / trade, ATR-adjusted stop distance")
         log.info("=" * 60)
 
         while True:
@@ -189,15 +294,9 @@ class AlphaLensBot:
             for ticker in TICKERS:
                 log.info(f"\n[{ticker}]")
                 result = self.generate_signal(ticker)
-                log.info(
-                    f"  Signal={result['signal']}  "
-                    f"Sentiment={result['sentiment']['label'].upper()} "
-                    f"({result['sentiment']['score']:.1f}/10)  "
-                    f"Trend={'↑ above MA50' if result['trend_ok'] else '↓ below MA50'}"
-                )
                 self.execute(result)
 
-            log.info(f"\nOpen positions: {self.positions or 'None'}")
+            log.info(f"\nOpen positions: {list(self.positions.keys()) or 'None'}")
             log.info(f"Sleeping {POLL_INTERVAL_SEC}s...\n")
             time.sleep(POLL_INTERVAL_SEC)
 

@@ -8,8 +8,17 @@ export interface SignalData {
   reason: string;
   sentiment_label: 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
   conviction_score: number;
+  // Rule-based indicators
   trend_ok: boolean;
   ma50: number;
+  rsi: number;
+  rsi_ok: boolean;
+  atr: number;
+  stop_loss: number;
+  take_profit: number;
+  volume_ratio: number;
+  volume_ok: boolean;
+  // OHLCV
   volume: string;
   day_high: number;
   day_low: number;

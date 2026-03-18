@@ -29,8 +29,20 @@ app.add_middleware(
 sentiment_agent = SentimentAgent()
 market_handler  = MarketDataHandler()
 TRADES_FILE     = Path("trades.json")
-MA_WINDOW       = 50
-SENT_THRESH     = 7.0
+
+# ── Strategy constants (mirrors bot.py) ──────────────────────────────────────
+MA_WINDOW        = 50     # 50-day moving average
+RSI_PERIOD       = 14
+RSI_BUY_MIN      = 30     # Below = falling knife
+RSI_BUY_MAX      = 70     # Above = overbought
+RSI_EXIT         = 75     # Exit existing position
+ATR_PERIOD       = 14
+ATR_SL_MULT      = 1.5    # Stop-loss = entry − 1.5×ATR
+ATR_TP_MULT      = 3.0    # Take-profit = entry + 3×ATR
+VOLUME_MA        = 20
+VOLUME_MIN       = 1.1    # Volume must be 10% above 20-day average
+SENT_THRESH      = 7.0
+SENT_EXIT        = 3.0
 
 COMPANY_NAMES = {
     "AAPL": "Apple Inc.",
@@ -38,6 +50,31 @@ COMPANY_NAMES = {
     "TSLA": "Tesla, Inc.",
     "NVDA": "NVIDIA Corporation",
 }
+
+
+def _calc_rsi(close: pd.Series, period: int = RSI_PERIOD) -> float:
+    """Wilder's RSI(14). Returns NaN-safe float."""
+    delta    = close.diff()
+    gain     = delta.clip(lower=0)
+    loss     = (-delta).clip(lower=0)
+    avg_gain = gain.ewm(alpha=1 / period, min_periods=period).mean()
+    avg_loss = loss.ewm(alpha=1 / period, min_periods=period).mean()
+    rs       = avg_gain / avg_loss.replace(0, np.nan)
+    rsi      = 100 - (100 / (1 + rs))
+    val      = float(rsi.iloc[-1])
+    return val if val == val else 50.0  # NaN-safe fallback
+
+
+def _calc_atr(df: pd.DataFrame, period: int = ATR_PERIOD) -> float:
+    """Average True Range(14). Returns NaN-safe float."""
+    high, low, close = df["High"], df["Low"], df["Close"]
+    prev_close = close.shift(1)
+    tr = pd.concat(
+        [high - low, (high - prev_close).abs(), (low - prev_close).abs()],
+        axis=1,
+    ).max(axis=1)
+    val = float(tr.rolling(period).mean().iloc[-1])
+    return val if val == val else 1.0
 
 
 def format_volume(vol: int) -> str:
@@ -86,40 +123,85 @@ def compute_signal(ticker):
     news      = market_handler.get_news(ticker)
     sentiment = sentiment_agent.analyze(ticker, news)
 
-    if df is None or len(df) < MA_WINDOW:
+    if df is None or len(df) < MA_WINDOW + 5:
         return fallback_signal(ticker)
 
-    price      = float(df["Close"].iloc[-1])
-    ma50       = float(df["Close"].rolling(MA_WINDOW).mean().iloc[-1])
-    prev_close = float(df["Close"].iloc[-2])
+    close      = df["Close"]
+    price      = float(close.iloc[-1])
+    prev_close = float(close.iloc[-2])
+    open_      = float(df["Open"].iloc[-1])
     change     = round(price - prev_close, 2)
     change_pct = round((price - prev_close) / prev_close * 100, 2)
 
-    trend_ok = price > ma50
-    sent_ok  = sentiment["score"] >= SENT_THRESH
+    # ── Compute indicators ────────────────────────────────────────────────────
+    ma50      = float(close.rolling(MA_WINDOW).mean().iloc[-1])
+    rsi       = _calc_rsi(close)
+    atr       = _calc_atr(df)
+    vol_avg   = float(df["Volume"].rolling(VOLUME_MA).mean().iloc[-1])
+    vol_now   = float(df["Volume"].iloc[-1])
+    vol_ratio = vol_now / vol_avg if vol_avg else 1.0
 
-    if trend_ok and sent_ok:
+    # ── Entry gate: ALL 4 must pass ───────────────────────────────────────────
+    trend_ok  = price > ma50                            # 1. uptrend
+    rsi_ok    = RSI_BUY_MIN <= rsi <= RSI_BUY_MAX       # 2. not overbought / not falling knife
+    volume_ok = vol_ratio >= VOLUME_MIN                  # 3. real buying pressure
+    sent_ok   = sentiment["score"] >= SENT_THRESH        # 4. AI confirms positive news
+    entry_ok  = trend_ok and rsi_ok and volume_ok and sent_ok
+
+    # ── Exit gate: ANY one triggers sell ─────────────────────────────────────
+    any_exit = (
+        not trend_ok
+        or rsi > RSI_EXIT
+        or sentiment["score"] < SENT_EXIT
+    )
+
+    if entry_ok:
         signal = "BUY"
-    elif sentiment["score"] < 3.0 or not trend_ok:
+    elif any_exit:
         signal = "SELL"
     else:
         signal = "HOLD"
 
-    # Natural language explanation built from real FinBERT + market data
-    sent_label  = sentiment["label"].upper()
-    score       = sentiment["score"]
-    n_headlines = sentiment.get("headlines_analyzed", 0)
-    price_vs_ma = ((price - ma50) / ma50 * 100) if ma50 else 0
-    direction   = "above" if trend_ok else "below"
+    # ── ATR-based stop-loss / take-profit ─────────────────────────────────────
+    sl_price = round(price - ATR_SL_MULT * atr, 2)   # 1.5× ATR below entry
+    tp_price = round(price + ATR_TP_MULT * atr, 2)   # 3.0× ATR above entry (2:1 R/R)
 
-    reason = (
-        f"FinBERT analyzed {n_headlines} headlines for {ticker} and returned a conviction score of "
-        f"{score:.1f}/10 ({sent_label} sentiment). The price (${price:.2f}) is {abs(price_vs_ma):.1f}% "
-        f"{direction} the 50-day moving average (${ma50:.2f}). "
-        f"A BUY requires conviction above 7.0 and price above the 50-day MA. "
-        f"A SELL triggers when conviction falls below 3.0 or price drops below the 50-day MA. "
-        f"With current readings, the signal is {signal}."
-    )
+    # ── Reason string ─────────────────────────────────────────────────────────
+    score       = sentiment["score"]
+    sent_label  = sentiment["label"].upper()
+    n_headlines = sentiment.get("headlines_analyzed", 0)
+    price_vs_ma = (price - ma50) / ma50 * 100
+
+    if signal == "BUY":
+        reason = (
+            f"All 4 entry conditions passed for {ticker}. "
+            f"FinBERT scored {score:.1f}/10 ({sent_label}) across {n_headlines} headlines. "
+            f"Price (${price:.2f}) is {price_vs_ma:+.1f}% above the 50-day MA (${ma50:.2f}) — uptrend confirmed. "
+            f"RSI at {rsi:.1f} — not overbought. Volume is {vol_ratio:.1f}× the 20-day average — real demand. "
+            f"Stop-loss: ${sl_price} (1.5×ATR below entry). Take-profit: ${tp_price} (3×ATR, 2:1 reward-to-risk)."
+        )
+    elif signal == "SELL":
+        exit_reasons = []
+        if not trend_ok:                  exit_reasons.append(f"price (${price:.2f}) broke below 50MA (${ma50:.2f})")
+        if rsi > RSI_EXIT:                exit_reasons.append(f"RSI {rsi:.1f} > {RSI_EXIT} — overbought")
+        if sentiment["score"] < SENT_EXIT: exit_reasons.append(f"conviction fell to {score:.1f}/10 — negative news")
+        reason = (
+            f"SELL signal for {ticker}: {'; '.join(exit_reasons)}. "
+            f"FinBERT: {score:.1f}/10 ({sent_label}, {n_headlines} headlines). "
+            f"Price vs 50MA: {price_vs_ma:+.1f}%. RSI: {rsi:.1f}."
+        )
+    else:
+        failed = []
+        if not trend_ok:  failed.append(f"price below 50MA")
+        if not rsi_ok:    failed.append(f"RSI {rsi:.1f} outside 30–70")
+        if not volume_ok: failed.append(f"volume only {vol_ratio:.1f}× avg (need {VOLUME_MIN}×)")
+        if not sent_ok:   failed.append(f"conviction {score:.1f}/10 below {SENT_THRESH}")
+        reason = (
+            f"HOLD for {ticker}. "
+            f"{'Conditions not met: ' + '; '.join(failed) if failed else 'Waiting for entry conditions to align'}. "
+            f"FinBERT: {score:.1f}/10 ({sent_label}, {n_headlines} headlines). "
+            f"RSI: {rsi:.1f}. Price vs 50MA: {price_vs_ma:+.1f}%."
+        )
 
     if signal in ("BUY", "SELL"):
         save_trade({
@@ -127,9 +209,11 @@ def compute_signal(ticker):
             "signal":      signal,
             "price":       round(price, 2),
             "timestamp":   datetime.now().isoformat(),
-            "conviction":  sentiment["score"],
-            "stop_loss":   round(price * 0.98, 2),
-            "take_profit": round(price * 1.05, 2),
+            "conviction":  round(score, 2),
+            "stop_loss":   sl_price,
+            "take_profit": tp_price,
+            "rsi":         round(rsi, 1),
+            "atr":         round(atr, 2),
         })
 
     return {
@@ -144,10 +228,17 @@ def compute_signal(ticker):
         "conviction_score": sentiment["score"],
         "trend_ok":         trend_ok,
         "ma50":             round(ma50, 2),
+        "rsi":              round(rsi, 1),
+        "rsi_ok":           rsi_ok,
+        "atr":              round(atr, 2),
+        "stop_loss":        sl_price,
+        "take_profit":      tp_price,
+        "volume_ratio":     round(vol_ratio, 2),
+        "volume_ok":        volume_ok,
         "day_high":         round(float(df["High"].iloc[-1]), 2),
         "day_low":          round(float(df["Low"].iloc[-1]), 2),
-        "open":             round(float(df["Open"].iloc[-1]), 2),
-        "volume":           format_volume(int(df["Volume"].iloc[-1])),
+        "open":             round(open_, 2),
+        "volume":           format_volume(int(vol_now)),
         "headlines": [
             {
                 "title":     h,
@@ -168,10 +259,18 @@ def fallback_signal(ticker):
         "change":           0.0,
         "change_percent":   0.0,
         "signal":           "HOLD",
+        "reason":           "Insufficient data to compute signal.",
         "sentiment_label":  "NEUTRAL",
         "conviction_score": 5.0,
         "trend_ok":         False,
         "ma50":             0.0,
+        "rsi":              50.0,
+        "rsi_ok":           True,
+        "atr":              0.0,
+        "stop_loss":        0.0,
+        "take_profit":      0.0,
+        "volume_ratio":     1.0,
+        "volume_ok":        False,
         "day_high":         0.0,
         "day_low":          0.0,
         "open":             0.0,

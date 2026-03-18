@@ -372,44 +372,59 @@ function DashboardTab({
                 </span>
               </div>
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  {currentData.trend_ok ? (
-                    <Check className="w-4 h-4 text-[var(--green)]" />
-                  ) : (
-                    <X className="w-4 h-4 text-[var(--red)]" />
-                  )}
-                  <span className="font-sans text-[11px] text-[var(--text-primary)]">
-                    Price above 50-day MA
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  {currentData.conviction_score >= 7 ? (
-                    <Check className="w-4 h-4 text-[var(--green)]" />
-                  ) : (
-                    <X className="w-4 h-4 text-[var(--red)]" />
-                  )}
-                  <span className="font-sans text-[11px] text-[var(--text-primary)]">
-                    Conviction above 7.0
-                  </span>
-                </div>
+                {[
+                  {
+                    ok: currentData.trend_ok,
+                    label: `Uptrend: price above 50-day MA ($${currentData.ma50?.toFixed(2)})`,
+                  },
+                  {
+                    ok: currentData.rsi_ok,
+                    label: `RSI ${currentData.rsi?.toFixed(1)} in range 30–70 (not overbought)`,
+                  },
+                  {
+                    ok: currentData.volume_ok,
+                    label: `Volume ${currentData.volume_ratio?.toFixed(1)}× 20-day avg (real demand)`,
+                  },
+                  {
+                    ok: currentData.conviction_score >= 7,
+                    label: `AI conviction ${currentData.conviction_score?.toFixed(1)}/10 ≥ 7.0`,
+                  },
+                ].map(({ ok, label }) => (
+                  <div key={label} className="flex items-center gap-2">
+                    {ok ? (
+                      <Check className="w-4 h-4 text-[var(--green)]" />
+                    ) : (
+                      <X className="w-4 h-4 text-[var(--red)]" />
+                    )}
+                    <span className="font-sans text-[11px] text-[var(--text-primary)]">{label}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="grid grid-cols-4 gap-4 mb-3">
             {[
               { label: '50-DAY MA', value: `$${currentData.ma50.toFixed(2)}` },
               { label: 'CURRENT PRICE', value: `$${currentData.price.toFixed(2)}` },
-              {
-                label: 'DAY RANGE',
-                value: `$${currentData.day_low.toFixed(2)} - $${currentData.day_high.toFixed(2)}`,
-              },
+              { label: 'DAY RANGE', value: `$${currentData.day_low.toFixed(2)} – $${currentData.day_high.toFixed(2)}` },
               { label: 'VOLUME', value: currentData.volume },
             ].map((metric) => (
               <div key={metric.label} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-3">
-                <div className="font-sans text-[10px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">
-                  {metric.label}
-                </div>
+                <div className="font-sans text-[10px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">{metric.label}</div>
+                <div className="font-mono text-[13px] text-white">{metric.value}</div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-4 gap-4 mb-6">
+            {[
+              { label: 'RSI (14)', value: currentData.rsi != null ? currentData.rsi.toFixed(1) : '—' },
+              { label: 'ATR (14)', value: currentData.atr != null ? `$${currentData.atr.toFixed(2)}` : '—' },
+              { label: 'STOP LOSS', value: currentData.stop_loss != null ? `$${currentData.stop_loss.toFixed(2)}` : '—' },
+              { label: 'TAKE PROFIT', value: currentData.take_profit != null ? `$${currentData.take_profit.toFixed(2)}` : '—' },
+            ].map((metric) => (
+              <div key={metric.label} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-3">
+                <div className="font-sans text-[10px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">{metric.label}</div>
                 <div className="font-mono text-[13px] text-white">{metric.value}</div>
               </div>
             ))}
@@ -614,80 +629,149 @@ function StrategyTab() {
         <div className="mb-3">
           <span className="font-sans text-[11px] text-[var(--accent)] uppercase tracking-widest">SIGNAL LOGIC</span>
         </div>
-        <h2 className="font-sans text-[24px] font-semibold text-white mb-8">
+        <h2 className="font-sans text-[24px] font-semibold text-white mb-2">
           How AlphaLens Generates Trading Decisions
         </h2>
+        <p className="font-sans text-[14px] text-[var(--text-secondary)] mb-8">
+          All 4 entry conditions must pass simultaneously. Any single failure produces a HOLD. This prevents the bot from acting on partial signals — the most common cause of systematic trading losses.
+        </p>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-6 mb-6">
           <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
-            <div className="mb-3">
-              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">
-                CONDITION 1 OF 2
-              </span>
+            <div className="mb-3 flex items-center gap-3">
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 1 — TREND</span>
             </div>
-            <h3 className="font-sans text-[18px] font-semibold text-white mb-4">Technical Filter</h3>
-            <p className="font-sans text-[14px] text-[var(--text-primary)] leading-relaxed mb-4">
-              The stock price must be trading above its 50-day simple moving average. This confirms the underlying
-              trend is upward before any position is opened. Momentum without sentiment is noise. AlphaLens requires
-              the trend first.
+            <h3 className="font-sans text-[16px] font-semibold text-white mb-3">Price Above 50-Day MA</h3>
+            <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
+              The 50-day moving average is called the institutional line. When price is above it, the majority of investors who bought in the last 50 days are sitting on profit — they have no reason to panic-sell, and momentum is on your side. Buying below the 50MA means fighting the trend. Every professional trader checks this first.
+            </p>
+            <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
+              Why not the 200-day? The 200MA is a long-term signal — too slow for a news-driven strategy. The 50MA responds to trend shifts in weeks, not months, which matches our 5-minute polling cycle.
             </p>
             <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
-              price &gt; MA50 = True
+              price {'>'} MA(50) = True
             </div>
           </div>
 
           <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
             <div className="mb-3">
-              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">
-                CONDITION 2 OF 2
-              </span>
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 2 — MOMENTUM</span>
             </div>
-            <h3 className="font-sans text-[18px] font-semibold text-white mb-4">Sentiment Filter</h3>
-            <p className="font-sans text-[14px] text-[var(--text-primary)] leading-relaxed mb-4">
-              FinBERT analyzes all news headlines published in the last 24 hours for the target ticker. The average
-              conviction score across all headlines must exceed 7.0 out of 10. A single strong headline is not
-              sufficient.
+            <h3 className="font-sans text-[16px] font-semibold text-white mb-3">RSI Between 30 and 70</h3>
+            <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
+              RSI (Relative Strength Index) measures how fast a stock is moving relative to itself. Above 70 means the stock has already run hard — you would be buying at the top, paying someone else's profit. Below 30 means the stock is still falling and no one knows where it stops (catching a falling knife). The 30–70 band is the healthy zone: the stock has real momentum but hasn't overextended.
+            </p>
+            <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
+              Without RSI, a trend-following bot will buy stocks that already surged 15% on news — right before they pull back. RSI prevents chasing.
             </p>
             <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
-              conviction_score &gt;= 7.0 = True
+              30 {'<='} RSI(14) {'<='} 70 = True
+            </div>
+          </div>
+
+          <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
+            <div className="mb-3">
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 3 — VOLUME</span>
+            </div>
+            <h3 className="font-sans text-[16px] font-semibold text-white mb-3">Volume ≥ 1.1× 20-Day Average</h3>
+            <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
+              Price moves on low volume are unreliable. If a stock rises 2% but only a handful of trades happened, the move can reverse the moment one large seller appears. When volume is above its 20-day average, it means real market participation — institutions, funds, and retail traders are all involved. That price move will hold.
+            </p>
+            <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
+              Volume is the market's conviction score. High volume on an up day = real demand. High volume on a down day = real selling pressure. We only enter when the buying side has the evidence.
+            </p>
+            <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
+              volume / avg_volume(20) {'>'}{'>'}= 1.1 = True
+            </div>
+          </div>
+
+          <div className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-6">
+            <div className="mb-3">
+              <span className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-wide">CONDITION 4 — AI SENTIMENT</span>
+            </div>
+            <h3 className="font-sans text-[16px] font-semibold text-white mb-3">FinBERT Conviction ≥ 7.0 / 10</h3>
+            <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed mb-3">
+              This is the AI layer. FinBERT reads financial news the same way a research analyst would — understanding context and nuance, not just keywords. "Apple misses estimates" and "Apple beats estimates" share most of the same words, but FinBERT classifies them correctly. A score of 7.0+ means strongly positive signals across multiple headlines, not just one.
+            </p>
+            <p className="font-sans text-[12px] text-[var(--text-secondary)] leading-relaxed mb-3">
+              Why 7.0 and not 5.0? A score of 5 means the AI is uncertain — close to neutral. We need the AI to be confident, not just slightly positive. The 7.0 threshold filters noise and focuses on stories with real market impact.
+            </p>
+            <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm p-3">
+              finbert_conviction {'>'}{'>'}= 7.0 = True
             </div>
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <p className="font-sans text-[14px] text-[var(--accent)]">
-            Both conditions must return True. Either condition failing produces a HOLD signal.
+        <div className="border border-[var(--accent)]/30 bg-[var(--accent)]/5 rounded-sm p-4 text-center">
+          <p className="font-mono text-[13px] text-[var(--accent)]">
+            BUY = trend ∧ rsi_ok ∧ volume_ok ∧ sentiment_ok
+          </p>
+          <p className="font-sans text-[12px] text-[var(--text-secondary)] mt-1">
+            All four must be True simultaneously. One failure = HOLD, regardless of how strong the others are.
           </p>
         </div>
       </div>
 
       <div className="mb-12">
-        <h2 className="font-sans text-[20px] font-semibold text-white mb-6">RISK FRAMEWORK</h2>
+        <h2 className="font-sans text-[20px] font-semibold text-white mb-2">EXIT CONDITIONS</h2>
+        <p className="font-sans text-[13px] text-[var(--text-secondary)] mb-6">
+          Positions are monitored continuously. Any single exit condition closes the trade immediately — no waiting.
+        </p>
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          {[
+            {
+              label: 'Trend Break',
+              trigger: 'Price < MA50',
+              desc: 'The primary trend has reversed. The institutional support that justified the entry is gone. Staying in a downtrend is the most common mistake retail traders make.',
+            },
+            {
+              label: 'Overbought Exit',
+              trigger: 'RSI > 75',
+              desc: 'The stock has moved too far, too fast. RSI above 75 is where professional traders begin taking profits. We exit before the inevitable pullback.',
+            },
+            {
+              label: 'Sentiment Collapse',
+              trigger: 'Conviction < 3.0',
+              desc: 'The AI detects a shift to negative news coverage mid-position. News-driven positions must be exited when the news turns — this is the entire premise of the system.',
+            },
+          ].map((item) => (
+            <div key={item.label} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-4">
+              <div className="font-sans text-[11px] text-[var(--text-secondary)] uppercase tracking-wide mb-1">{item.label}</div>
+              <div className="font-mono text-[13px] font-bold text-[var(--red)] mb-2">{item.trigger}</div>
+              <p className="font-sans text-[12px] text-[var(--text-primary)] leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mb-12">
+        <h2 className="font-sans text-[20px] font-semibold text-white mb-2">RISK MANAGEMENT — ATR-BASED</h2>
+        <p className="font-sans text-[13px] text-[var(--text-secondary)] mb-6">
+          Stop-loss and take-profit are calculated from ATR (Average True Range) — not fixed percentages. ATR measures how much a stock typically moves in a single day. TSLA moves ~$8/day. MSFT moves ~$3/day. A 2% fixed stop treats them identically — which is wrong. ATR-based levels respect each stock's own volatility personality.
+        </p>
 
         <div className="grid grid-cols-3 gap-4">
           {[
             {
               label: 'Stop-Loss',
-              value: '-2.00%',
-              desc: 'Automatic sell if price drops 2% below entry. No exceptions.',
+              value: '1.5 × ATR',
+              desc: 'Entry price minus 1.5× the 14-day ATR. Gives the stock room to breathe through normal intraday noise without triggering on a routine fluctuation.',
             },
             {
               label: 'Take-Profit',
-              value: '+5.00%',
-              desc: 'Position closes at 5% gain to lock returns systematically.',
+              value: '3.0 × ATR',
+              desc: 'Entry price plus 3× the ATR. This creates a 2:1 reward-to-risk ratio on every trade — a professional standard. Win half your trades and still come out ahead.',
             },
             {
               label: 'Conviction Floor',
-              value: '3.0/10',
-              desc: 'Mid-position sentiment collapse triggers exit review.',
+              value: '3.0 / 10',
+              desc: 'If FinBERT conviction drops below 3 mid-position, the thesis for holding is gone. Sentiment-based entries require sentiment-based exits.',
             },
           ].map((item) => (
             <div key={item.label} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-4">
-              <div className="font-sans text-[11px] text-[var(--text-secondary)] uppercase tracking-wide mb-2">
-                {item.label}
-              </div>
-              <div className="font-mono text-[24px] font-bold text-[var(--accent)] mb-2">{item.value}</div>
-              <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed">{item.desc}</p>
+              <div className="font-sans text-[11px] text-[var(--text-secondary)] uppercase tracking-wide mb-2">{item.label}</div>
+              <div className="font-mono text-[20px] font-bold text-[var(--accent)] mb-2">{item.value}</div>
+              <p className="font-sans text-[12px] text-[var(--text-primary)] leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
@@ -974,8 +1058,6 @@ function HowItWorksTab() {
     { name: 'Next.js 14', desc: 'Frontend application framework' },
     { name: 'Tailwind CSS', desc: 'Utility-first styling' },
     { name: 'Recharts', desc: 'Chart components' },
-    { name: 'Render', desc: 'Python backend hosting' },
-    { name: 'Vercel', desc: 'Frontend deployment' },
   ];
 
   return (
@@ -999,11 +1081,11 @@ function HowItWorksTab() {
             },
             {
               title: 'SIGNAL GENERATION',
-              desc: 'The conviction score is combined with a 50-day moving average check. Both conditions must pass. If either fails, the signal is HOLD regardless of individual strength.',
+              desc: 'Four conditions are evaluated: (1) price above 50-day MA, (2) RSI between 30–70, (3) volume ≥ 1.1× 20-day average, (4) FinBERT conviction ≥ 7.0. All four must pass simultaneously. Any failure = HOLD.',
             },
             {
               title: 'EXECUTION',
-              desc: 'Qualifying BUY signals are logged as paper trades with a 2% stop-loss and 5% take-profit automatically attached. All trades are recorded to trades.json for review.',
+              desc: 'BUY signals trigger a paper trade with ATR-based stop-loss (1.5× ATR below entry) and take-profit (3× ATR above entry). Position size is risk-adjusted: 1% of portfolio ÷ stop distance. All trades logged to trades.json.',
             },
           ].map((step, idx) => (
             <div key={idx} className="flex items-stretch flex-1">
@@ -1023,6 +1105,62 @@ function HowItWorksTab() {
               )}
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="mb-16">
+        <h2 className="font-sans text-[24px] font-bold text-white mb-2">THE RULE-BASED ENGINE</h2>
+        <p className="font-sans text-[14px] text-[var(--text-secondary)] mb-8">
+          Every trade decision passes through four deterministic filters. These are not suggestions — they are hard gates written in Python. If any gate returns False, the signal is HOLD regardless of how strong the others are.
+        </p>
+
+        <div className="space-y-4">
+          {[
+            {
+              rule: '50-Day Moving Average',
+              gate: 'price > MA(50)',
+              why: 'The MA50 is the most widely watched trend line by professional and institutional traders. When price is above it, the crowd is on your side — the last 50 days of buyers are in profit and not panic-selling. Buying below the MA means betting against the prevailing trend, which statistically loses more often than it wins. This is the first question any experienced trader asks: "Is this stock in an uptrend?"',
+              tag: 'TREND FILTER',
+            },
+            {
+              rule: 'RSI Between 30 and 70',
+              gate: '30 ≤ RSI(14) ≤ 70',
+              why: 'RSI tells you how fast and how far a stock has moved relative to its own history. Above 70 = the stock is overbought — it has already had its run, and you are buying at the peak right before a pullback. Below 30 = oversold — the stock is still falling and there is no floor yet. The 30–70 zone is where stocks have healthy upward momentum without being stretched. This single rule prevents the most common retail trading mistake: chasing a stock after it already moved.',
+              tag: 'MOMENTUM FILTER',
+            },
+            {
+              rule: 'Volume ≥ 1.1× 20-Day Average',
+              gate: 'volume / avg_vol(20) ≥ 1.1',
+              why: 'Price without volume is a rumor. Volume is the market\'s vote of confidence. When more shares than usual are trading on an up day, it means real buyers — institutions, funds, large accounts — are participating. A stock that moves 2% on half its normal volume can reverse the moment one big seller appears. A stock that moves on 1.5× volume is being accumulated. Volume confirms the move is real, not a thin-market illusion.',
+              tag: 'CONFIRMATION FILTER',
+            },
+            {
+              rule: 'FinBERT Conviction ≥ 7.0',
+              gate: 'finbert_score ≥ 7.0 / 10',
+              why: 'This is the AI edge. FinBERT is trained on financial documents and understands sentiment the way a research analyst does — it knows "Apple misses estimates" is bad even though "misses" is just one word. A score of 7.0+ means the model found strongly positive signals across multiple recent headlines, not just a single ambiguous story. Scores of 5–6 are too noisy — the market has already priced in neutral news. We need the AI to be confident, not just slightly optimistic.',
+              tag: 'AI SENTIMENT FILTER',
+            },
+          ].map((item) => (
+            <div key={item.rule} className="border border-[var(--border)] bg-[var(--bg-surface)] rounded-sm p-5">
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <div>
+                  <span className="font-mono text-[9px] text-[var(--accent)] uppercase tracking-widest">{item.tag}</span>
+                  <h3 className="font-sans text-[15px] font-semibold text-white mt-0.5">{item.rule}</h3>
+                </div>
+                <div className="font-mono text-[12px] text-[var(--text-secondary)] bg-[var(--bg-base)] border border-[var(--border)] rounded-sm px-3 py-1.5 shrink-0">
+                  {item.gate}
+                </div>
+              </div>
+              <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed">{item.why}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 border border-[var(--accent)]/20 bg-[var(--accent)]/5 rounded-sm p-5">
+          <div className="font-mono text-[10px] text-[var(--accent)] uppercase tracking-widest mb-2">WHY ALL 4 TOGETHER?</div>
+          <p className="font-sans text-[13px] text-[var(--text-primary)] leading-relaxed">
+            Each rule alone is insufficient. MA50 tells you the trend but not whether the stock is overextended. RSI tells you momentum but not the direction. Volume tells you participation but not the news context. FinBERT tells you the news story but not the price action. Together, they create a multi-dimensional filter that requires the trend, the momentum, the market participation, and the news sentiment to all align before committing capital. This is how professional systematic traders reduce false signals.
+          </p>
         </div>
       </div>
 
