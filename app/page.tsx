@@ -1299,7 +1299,7 @@ function AboutTab() {
         <h2 className="font-sans text-[28px] font-bold text-white mb-6">BUILT FOR</h2>
 
         <p className="font-sans text-[15px] text-[var(--text-primary)] leading-relaxed">
-          AlphaLens was developed for Business Applications of AI at the Schulich School of Business, MMai program, York University.
+          AlphaLens was developed for Business Applications of AI at the Schulich School of Business, MMAI program, York University.
         </p>
       </div>
 
