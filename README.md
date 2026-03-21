@@ -1,5 +1,5 @@
 # AlphaLens
-AI-powered sentiment-driven stock signal platform for equity markets.
+An AI-powered trading assistant that reads financial news, scores how positive or negative it is, and combines that with price data to decide whether to buy, sell, or hold a stock.
 
 **Course:** MMAI 5090 F - Business Applications of AI II | Noelia Cornejo · Dedan Deus · Emily Bendeck Garay · Qazi Fabia Hoq · Esha Malhi | Dr. Divinus Oppong-Tawiah
 
@@ -22,138 +22,200 @@ Then open [http://localhost:3000](http://localhost:3000)
 
 ## The Problem
 
-Retail traders are drowning in financial news. Thousands of headlines are published every hour across earnings reports, analyst upgrades, geopolitical events, and market commentary. Most traders either ignore this signal entirely or rely on gut instinct to interpret it. Neither approach is systematic or scalable.
+Every day, thousands of news articles, earnings reports, and analyst opinions are published about publicly traded companies. If you are a regular person trying to invest, there is no realistic way to read all of it. Even professional traders miss things.
 
-Existing trading tools show prices and charts. They do not tell you what the market is saying in plain language, how confident to be in a signal, or whether the news actually supports the technical setup. The traders who can process news fastest win, and everyone else reacts after the move has already happened.
+Most trading apps just show you a price chart. They do not tell you what the news is saying right now, whether that news is good or bad, or how confident you should be in any given signal. By the time a regular person reads the news and decides to act, the price has often already moved.
 
-AlphaLens was built to close that gap.
+AlphaLens was built to automate that reading and decision-making process.
+
+---
 
 ## What AlphaLens Does
 
-AlphaLens is a stock signal platform that monitors AAPL, MSFT, TSLA, and NVDA in real time. For each ticker it pulls live financial news headlines, scores them with FinBERT (a financial-domain NLP model), then evaluates four rule-based conditions — trend, momentum (RSI), volume, and sentiment conviction — to produce a BUY, SELL, or HOLD decision. All four entry conditions must pass simultaneously. Any one exit condition is enough to close a position.
+AlphaLens watches four stocks in real time: Apple (AAPL), Microsoft (MSFT), Tesla (TSLA), and NVIDIA (NVDA).
 
-The user opens a dashboard and sees every tracked ticker with its current sentiment score, conviction level, latest headlines, price data, and trading signal, all updated every 60 seconds. The reasoning behind every signal is fully transparent: which of the four conditions passed or failed, what the RSI and volume readings were, how many headlines were analyzed, and exactly why the system landed on BUY, SELL, or HOLD.
+Every 60 seconds it pulls the latest news headlines for each stock, runs those headlines through an AI model to figure out whether the news is positive or negative, checks a few price-based signals, and then outputs a BUY, SELL, or HOLD recommendation.
 
-A paper trading bot runs in the background on a 5-minute loop, sizing positions by risking 1% of the portfolio per trade and setting stops dynamically using the Average True Range. A backtesting engine runs the full strategy across 12 months of historical data and benchmarks the result against the S&P 500.
+It does not just look at one thing. It checks four separate conditions before recommending a buy. If even one of those conditions fails, it stays out of the trade. This makes the system conservative by design, which is a good thing when real money is involved.
+
+There is also a simulated trading bot that runs in the background and pretends to buy and sell with fake money. This is called paper trading, and it lets you test the strategy without any financial risk. A separate backtesting tool tests the same strategy on the past 12 months of real historical data to see how it would have performed.
+
+---
 
 ## How the Signal Works
 
-The signal logic combines four independent inputs. All four must agree to enter a trade. Any one of three conditions is enough to exit.
+Think of the signal engine as a checklist. Before AlphaLens recommends buying a stock, it runs through four checks. All four must pass. If any one of them fails, the answer is not BUY.
 
-### The Four Entry Conditions
+### Check 1: Is the stock in an upward trend?
 
-**1. Trend filter (50-day MA)**
-AlphaLens fetches 12 months of daily OHLCV data via yfinance and computes the 50-day simple moving average. Price must be above MA50 to qualify. A stock below its 50-day MA is in a downtrend and is excluded regardless of how positive the news looks.
+AlphaLens looks at the average closing price of the stock over the past 50 trading days. This is called the 50-day moving average. If today's price is above that average, the stock has generally been going up over the last few months. If it is below, the stock has been going down.
 
-**2. RSI momentum filter (RSI-14)**
-The Relative Strength Index is computed using Wilder's method over 14 periods. RSI must fall between 30 and 70 to enter. Below 30 means the stock is a falling knife — momentum is too negative. Above 70 means the stock is already overbought and chasing the move is risky. This window filters out both exhausted rallies and accelerating selloffs.
+AlphaLens only considers buying a stock that is above its 50-day average. The idea is simple: do not buy something that is already trending downward, no matter how good the news sounds.
 
-**3. Volume confirmation filter**
-Current-day volume must be at least 1.1× the 20-day rolling average volume. A price move without elevated volume is suspect — it may be a low-conviction drift rather than real buying pressure. This filter ensures trades are backed by genuine market participation.
+### Check 2: Is the stock in a healthy buying zone?
 
-**4. AI sentiment filter (FinBERT conviction ≥ 7.0)**
-AlphaLens feeds up to 10 live headlines per ticker into FinBERT, a BERT model fine-tuned specifically on financial text by ProsusAI. Generic sentiment models trained on social media or product reviews perform poorly on financial language, where the same word can be bullish or bearish depending on context. FinBERT was trained on financial news, analyst reports, and earnings calls. The model returns a probability distribution across positive, neutral, and negative labels. AlphaLens converts that into a conviction score from 0 to 10, penalizing ambiguous results where the neutral probability is high. Conviction must reach 7.0 or above to pass. If FinBERT cannot load (no internet or low RAM), a keyword-based fallback keeps the system running.
+This check uses something called the RSI, which stands for Relative Strength Index. You do not need to know the math behind it. What it tells you is whether a stock has been bought up too aggressively recently, or has been falling too fast.
 
-### The Entry and Exit Gates
+The RSI runs on a scale of 0 to 100. AlphaLens requires the RSI to be between 30 and 70 to enter a trade.
 
-The decision rule is explicit and deterministic:
+- If the RSI is below 30, the stock has been falling sharply and buying in at that point is risky.
+- If the RSI is above 70, the stock has already been overbought by other investors and is probably due for a pullback. Buying at that point means you might be the last one in before the price drops.
+- The 30 to 70 range is the sweet spot: the stock is moving but not overextended in either direction.
 
-**BUY** — all four conditions must pass simultaneously:
-- Price is above the 50-day MA (uptrend confirmed)
-- RSI(14) is between 30 and 70 (not overbought, not a falling knife)
-- Volume is at least 1.1× the 20-day average (real buying pressure)
-- FinBERT conviction is at or above 7.0 out of 10 (AI confirms strongly positive news)
+If the RSI is above 75 while you are already in a trade, AlphaLens treats that as a signal to sell because the stock is getting overheated.
 
-**SELL** — triggered if any one of the following is true:
-- Price drops below the 50-day MA (trend broken)
-- RSI(14) rises above 75 (overbought, take profit)
-- FinBERT conviction falls below 3.0 (sentiment turned negative)
-- Price hits the ATR-based stop-loss level
-- Price hits the ATR-based take-profit level
+### Check 3: Is there real buying interest behind the move?
 
-**HOLD** — everything else
+Volume means the number of shares that actually changed hands on a given day. When a lot of people are trading a stock, the volume is high. When barely anyone is trading it, the volume is low.
 
-No single input alone triggers a BUY. All four must align. Exits are asymmetric by design: entry requires consensus, exit requires only one warning sign. This keeps the system conservative on entries and fast on risk management.
+A price increase on low volume can be misleading. It might just be a small number of trades pushing the price around, not a real wave of investor interest. AlphaLens requires that today's trading volume be at least 10% higher than the average volume over the past 20 days before it considers a buy. This confirms that real money is moving into the stock, not just noise.
 
-### ATR-Based Stop-Loss and Take-Profit
+### Check 4: Is the news actually good?
 
-Rather than fixed percentage stops, AlphaLens uses volatility-adjusted levels computed from the Average True Range (ATR-14). ATR measures the average daily price range over 14 days, giving a realistic estimate of how much a stock normally moves.
+This is the AI part of the system. AlphaLens feeds up to 10 recent news headlines for each stock into a model called FinBERT. FinBERT is a version of the BERT language model that was specifically trained on financial text, including news articles, analyst reports, and earnings call transcripts. This matters because a word like "cut" means something very different in a product review versus a financial headline about interest rate cuts.
 
-- **Stop-loss**: entry price minus 1.5× ATR(14)
-- **Take-profit**: entry price plus 3× ATR(14)
+FinBERT reads each headline and outputs a score between 0 and 1 for three labels: positive, neutral, and negative. AlphaLens takes those scores and converts them into a single conviction score between 0 and 10. The higher the score, the more confidently positive the news is.
 
-This produces a 2:1 reward-to-risk ratio on every trade. A stock that moves $3 per day has a wider stop than one that moves $0.50, which prevents stop-outs caused by normal volatility rather than a real reversal.
-
-### Position Sizing
-
-The bot risks exactly 1% of the paper portfolio per trade. Position size is calculated as:
+There is also a penalty built in for ambiguity. If FinBERT is not sure and the neutral score is high, the conviction score is reduced. The formula is:
 
 ```
-quantity = floor((portfolio × 1%) / (1.5 × ATR))
+conviction = (dominant_probability * 10) - (neutral_probability * 2)
 ```
 
-This means fewer shares are bought when a stock is more volatile. A volatile stock has a larger ATR, which means a wider stop-loss distance, which reduces the number of shares needed to keep the dollar risk at 1%. The bet scales down automatically as volatility rises.
+This means a headline that FinBERT is wishy-washy about will produce a lower score than one it is clearly positive about. AlphaLens requires a conviction score of 7.0 or above to consider buying.
 
-### Keyword Fallback (No Model Needed)
+### The Full Decision Logic
 
-If FinBERT cannot load — due to no internet connection, insufficient RAM, or a missing model file — AlphaLens falls back to a deterministic keyword scoring system. The fallback counts positive and negative word matches across all headlines and produces a label and raw score without any ML inference.
+**BUY** only when all four of the following are true at the same time:
+- Price is above the 50-day moving average (the stock is in an uptrend)
+- RSI is between 30 and 70 (the stock is not overextended in either direction)
+- Today's volume is at least 1.1 times the 20-day average (real trading activity is there)
+- FinBERT conviction score is 7.0 or above (the news is clearly positive)
 
-Positive keywords: `beat, beats, surge, record, growth, profit, bullish, upgrade, buy, strong, rally, gain, exceed, outperform, revenue, positive, up, rise, high, launch, partnership`
+**SELL** if any one of the following becomes true:
+- Price drops below the 50-day moving average (the uptrend has broken)
+- RSI rises above 75 (the stock has become overbought)
+- FinBERT conviction drops below 3.0 (the news has turned negative)
+- Price hits the stop-loss level (explained below)
+- Price hits the take-profit target (explained below)
 
-Negative keywords: `miss, misses, fall, drop, loss, bearish, downgrade, sell, weak, decline, recall, lawsuit, fine, cut, warning, risk, fraud, layoff, crash, concern, debt`
+**HOLD** in all other cases, meaning the conditions to buy are not quite there yet and no exit trigger has been hit.
 
-The score is computed as the dominant count divided by the total keyword count. If positive matches exceed negative, the label is positive and the score is `pos / (pos + neg)`. If equal, it is neutral with a score of 0.5. This score is then scaled to the same 0–10 conviction range used by FinBERT, so the rest of the signal pipeline does not need to change.
+The logic is intentionally stricter to get in than to get out. You need four things to go right to buy. You only need one thing to go wrong to sell. This protects against holding onto a losing trade for too long.
+
+---
+
+## Stop-Loss and Take-Profit: How the Bot Protects Itself
+
+Every trade AlphaLens enters comes with two automatic exit prices set at the moment of entry. These are not optional. They fire automatically.
+
+**Stop-loss** is the price at which AlphaLens automatically sells to cut a losing trade. It is set below the entry price. If the stock falls to that level, the trade closes immediately to limit the damage.
+
+**Take-profit** is the price at which AlphaLens automatically sells to lock in a winning trade. It is set above the entry price. When the stock hits that target, the position is closed and the gain is realized.
+
+Rather than using a fixed percentage for both of these (like always set the stop 2% below entry), AlphaLens uses something called the Average True Range, or ATR. The ATR measures how much the stock price typically moves in a single day based on the past 14 days of price data. This gives a more realistic picture of what counts as normal movement versus a real problem.
+
+- Stop-loss is set at: entry price minus 1.5 times the ATR
+- Take-profit is set at: entry price plus 3 times the ATR
+
+This means if a stock normally moves $2 per day, the stop is $3 below entry and the target is $6 above. For every $1 you risk, you are targeting a $2 gain. That 2-to-1 ratio is built in on every single trade.
+
+The reason this is better than a fixed percentage is that a stock like TSLA naturally moves more than a stock like MSFT. A 2% stop on TSLA might get hit just by normal daily noise, causing you to exit a perfectly good trade. By basing the stop on actual historical volatility, the exits are appropriate for each individual stock.
+
+---
+
+## Position Sizing: How Much to Buy
+
+AlphaLens does not always buy the same number of shares. Instead, it calculates how many shares to buy based on how much risk it is willing to take.
+
+The rule is: risk exactly 1% of the total portfolio on each trade, no more.
+
+The calculation is:
+
+```
+shares to buy = floor((total portfolio value * 1%) / (1.5 * ATR))
+```
+
+Here is what that means in plain terms. If the portfolio is worth $10,000 and you are risking 1%, you are willing to lose a maximum of $100 on this trade. The stop-loss is 1.5 times the ATR below your entry. If the ATR is $5, your stop-loss distance is $7.50. Divide $100 by $7.50 and you can afford to buy 13 shares while keeping the risk at exactly $100.
+
+If the ATR is higher (the stock is more volatile), the number of shares goes down automatically. If the ATR is lower (the stock is calmer), you can buy more shares and still stay within the $100 risk limit. The system naturally bets smaller on volatile stocks and larger on stable ones.
+
+---
+
+## The Keyword Fallback
+
+FinBERT requires about 500MB of storage and an internet connection to download on first use. If the model cannot load for any reason, AlphaLens does not crash. It switches to a simple keyword-based backup system that reads the same headlines and counts how many positive and negative words appear.
+
+Positive words it looks for: `beat, beats, surge, record, growth, profit, bullish, upgrade, buy, strong, rally, gain, exceed, outperform, revenue, positive, up, rise, high, launch, partnership`
+
+Negative words it looks for: `miss, misses, fall, drop, loss, bearish, downgrade, sell, weak, decline, recall, lawsuit, fine, cut, warning, risk, fraud, layoff, crash, concern, debt`
+
+If more positive words appear than negative, the headline is scored as positive and the score is the ratio of positive words to total matched words. If more negative words appear, it goes the other way. If it is a tie, the result is neutral with a score of 0.5. That result is then scaled to the same 0 to 10 range used by FinBERT, so nothing else in the system needs to change.
+
+This fallback is less accurate than FinBERT but it means the platform keeps running even without the full model loaded.
+
+---
 
 ## The Paper Trading Bot
 
-The bot (`bot.py`) runs a continuous loop every 5 minutes. At each interval it first checks all open positions against their ATR-based stop-loss and take-profit levels. If either level is breached, the position is closed and the P&L is logged. Then it cycles through every ticker: fetches fresh news, scores sentiment with FinBERT (or the keyword fallback), computes all four technical indicators, evaluates the entry and exit gates, and executes a simulated trade if the conditions are met.
+The trading bot lives in `bot.py`. Paper trading means it simulates real trades using real market prices but with fake money. Nothing is ever actually bought or sold. It is used to test whether the strategy works before ever committing real capital.
 
-When a BUY signal fires, the bot calculates position size using the 1%-risk / ATR formula before entering. When a SELL signal fires — whether from the rule engine or a stop/take-profit hit — the position is closed and final P&L is reported. Every trade is logged to the terminal, to `alphalens.log`, and persisted in `trades.json`. Position state is tracked in memory across scans.
+Here is what the bot does every 5 minutes:
+
+1. It checks all currently open positions to see if the stop-loss or take-profit level has been hit. If either one has been reached, it closes that position and logs the result.
+2. It then goes through each of the four tracked stocks one by one.
+3. For each stock, it pulls the latest headlines, runs FinBERT sentiment scoring, and computes the four indicators (moving average, RSI, volume, ATR).
+4. It evaluates whether the entry or exit conditions are met.
+5. If the BUY conditions are met and there is no open position in that stock, it enters a new paper trade and calculates how many shares to buy using the 1% risk rule.
+6. If a SELL condition is met and there is an open position, it closes the position and reports the profit or loss.
+7. Otherwise it holds and waits for the next scan.
+
+Every action is written to the terminal, saved to `alphalens.log`, and stored in `trades.json` so there is a full record of everything the bot has done.
+
+---
 
 ## Backtesting
 
-The backtesting engine runs the same strategy across 12 months of historical data for all four tickers using vectorbt for portfolio simulation. FinBERT scores live headlines at the time of the backtest run as a proxy for historical sentiment. Results are benchmarked against SPY and include total return, annualized return, Sharpe ratio, Sortino ratio, maximum drawdown, win rate, and total trade count. The output includes an equity curve rendered as both a static Matplotlib chart and an interactive Plotly visualization.
+Before trusting any strategy with real money, you should test it on historical data. Backtesting means running the exact same rules on past price data to see how the strategy would have performed.
+
+AlphaLens uses a library called vectorbt to simulate the full strategy on 12 months of historical price data for all four stocks. FinBERT is run on current headlines as a stand-in for historical sentiment (since past headlines are not stored). The simulated portfolio starts with $10,000.
+
+Results are compared against SPY, which is an ETF that tracks the S&P 500 index. The S&P 500 is a basket of 500 large US companies and is the standard benchmark that most investment strategies are measured against. If AlphaLens cannot beat simply buying and holding SPY, that is an important thing to know.
+
+The backtest produces:
+- Total return (how much the portfolio grew in percentage terms)
+- Annualized return (what that growth looks like averaged over a full year)
+- Sharpe ratio (how much return you got per unit of risk taken; higher is better)
+- Sortino ratio (similar to Sharpe but only penalizes downside volatility, not upside)
+- Maximum drawdown (the largest peak-to-trough loss the portfolio experienced)
+- Win rate (the percentage of trades that were profitable)
+- Total trade count
+
+The equity curve is saved as both a static image (`equity_curve.png`) and an interactive chart (`equity_curve.html`) in the backend folder.
+
+---
 
 ## The Dashboard
 
-The frontend is a live monitoring interface with five tabs. The main dashboard shows all four tickers with real-time price data, sentiment scores, signal labels, and the latest headlines that drove each analysis. A watchlist sidebar gives at-a-glance status across the full coverage universe. The strategy tab explains the methodology. The backtest tab shows 12 months of simulated performance against SPY. The how-it-works tab documents the signal logic.
+The dashboard is a browser-based interface with five tabs.
 
-The dashboard polls the backend every 60 seconds and displays the current NYSE market hours status and a paper trading indicator so it is always clear what mode the system is operating in.
+The main tab shows all four stocks with their current price, change from yesterday, sentiment score, conviction rating, trading signal, and the actual headlines that drove the analysis. Everything updates automatically every 60 seconds.
 
-## Technical Stack
+The watchlist sidebar gives you a quick overview of all four stocks at once so you can see which ones are bullish, neutral, or bearish without clicking through each one.
 
-AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScript and TailwindCSS, and a Python FastAPI backend. Sentiment analysis runs on ProsusAI/finbert via HuggingFace Transformers with PyTorch. Market data and price history come from yfinance. News headlines are fetched from Yahoo Finance RSS with a 15-minute cache. Backtesting runs on vectorbt. Charts use Recharts on the frontend and Matplotlib plus Plotly on the backend. Trade state is persisted to JSON. All processing happens server-side.
+The strategy tab explains the methodology in plain language.
 
-**Strategy parameters:**
+The backtest tab shows the 12-month simulation results including the equity curve chart comparing AlphaLens performance against SPY.
 
-| Parameter | Value |
-|-----------|-------|
-| Tickers | AAPL, MSFT, TSLA, NVDA |
-| MA window | 50 days |
-| RSI period | 14 |
-| RSI entry range | 30 – 70 |
-| RSI exit threshold | above 75 |
-| Volume MA window | 20 days |
-| Volume minimum | 1.1× 20-day average |
-| ATR period | 14 |
-| Stop-loss | entry − 1.5× ATR(14) |
-| Take-profit | entry + 3.0× ATR(14) (2:1 R/R) |
-| BUY conviction threshold | 7.0 / 10 or above |
-| SELL conviction threshold | below 3.0 / 10 |
-| Portfolio risk per trade | 1% |
-| Bot scan interval | 5 minutes |
-| Backtest period | 12 months |
-| Starting capital | $10,000 |
+The how-it-works tab walks through the signal logic step by step.
 
-## API Keys
+The dashboard also shows whether the NYSE (New York Stock Exchange) is currently open or closed, and displays a paper trading indicator so it is always clear that no real money is involved.
 
-No API keys are required to run AlphaLens.
-
-FinBERT (ProsusAI/finbert) downloads automatically from HuggingFace on first run (~500MB, one time only). yfinance and Yahoo Finance RSS are both free and require no authentication. All data sources are open and key-free.
+---
 
 ## LLM Prompt Design
 
-The sentiment agent uses the following prompt template to frame the FinBERT classification task:
+AlphaLens uses a prompt template to frame what it is asking FinBERT to evaluate. The prompt is:
 
 ```
 You are a financial analyst.
@@ -163,19 +225,60 @@ Headlines:
 {headlines}
 ```
 
-This prompt is constructed for explainability and logged with every signal output so the reasoning behind each decision can be audited. In practice, FinBERT does not process the prompt as free text the way a generative LLM would. The template is used to document what the model was asked to evaluate and is included in the API response under `prompt_used`.
+This prompt is stored and returned with every signal response under the field `prompt_used`. This makes the system auditable: you can always see exactly what text was fed to the model and what score came back.
 
-FinBERT runs inference on each headline independently and returns a probability distribution across positive, neutral, and negative labels. AlphaLens averages those probabilities across all headlines for a ticker, then converts the dominant label's probability into a conviction score using the formula:
+It is worth noting that FinBERT does not respond to this prompt the way a chatbot like ChatGPT would. FinBERT is a classification model, not a generative one. It reads each headline and outputs probabilities for three labels. The prompt structure is used here to document the task context and is included in the API output for transparency and explainability purposes.
+
+The actual scoring formula that converts those probabilities into a usable number is:
 
 ```
 conviction = (dominant_probability * 10) - (neutral_probability * 2)
 ```
 
-The penalty for high neutral probability ensures that ambiguous or mixed headlines reduce the conviction score rather than producing a falsely confident signal.
+The dominant probability is whichever label scored highest (positive, neutral, or negative). The neutral probability is subtracted with a penalty of 2 to reduce the score when the model is uncertain. A headline that FinBERT reads as 90% positive and 5% neutral gets a conviction score close to 9. A headline that FinBERT reads as 55% positive and 35% neutral gets penalized down to around 4.5. This prevents weak or ambiguous signals from reaching the 7.0 threshold and triggering a trade.
+
+---
+
+## Technical Stack
+
+AlphaLens is a full-stack application. The frontend is built with Next.js 13, TypeScript, and TailwindCSS. The backend is a Python FastAPI server. The AI model is ProsusAI/finbert, downloaded automatically from HuggingFace using the Transformers library with PyTorch. Market data comes from yfinance. News headlines are pulled from Yahoo Finance RSS feeds and cached for 15 minutes to avoid hitting the source too frequently. Backtesting uses vectorbt. Charts on the frontend use Recharts. The backend exports charts using Matplotlib and Plotly. All trade state is saved to a local JSON file.
+
+**Strategy parameters:**
+
+| Parameter | Value |
+|-----------|-------|
+| Tickers tracked | AAPL, MSFT, TSLA, NVDA |
+| Trend filter (moving average window) | 50 days |
+| Momentum filter (RSI period) | 14 days |
+| RSI entry range | 30 to 70 |
+| RSI overbought exit level | above 75 |
+| Volume filter window | 20-day rolling average |
+| Volume minimum to enter | at least 1.1 times the 20-day average |
+| Volatility measure (ATR period) | 14 days |
+| Stop-loss distance | 1.5 times ATR below entry price |
+| Take-profit target | 3.0 times ATR above entry price (2 to 1 reward-to-risk) |
+| Minimum conviction to buy | 7.0 out of 10 |
+| Conviction level that triggers sell | below 3.0 out of 10 |
+| Portfolio risk per trade | 1% |
+| Bot scan frequency | every 5 minutes |
+| Backtest period | 12 months |
+| Starting paper portfolio | $10,000 |
+
+---
+
+## API Keys
+
+No API keys are required to run AlphaLens.
+
+FinBERT downloads automatically from HuggingFace the first time you run the backend. This is a one-time download of about 500MB. After that it runs locally with no internet required for the model itself. yfinance and Yahoo Finance RSS are both completely free and require no account or authentication. Everything is open and ready to run out of the box.
+
+---
 
 ## Backtest Results
 
-Results are generated dynamically by running the backtesting engine. Live results are visible in the Backtest tab of the dashboard after starting the app. Representative metrics from a 12-month run on AAPL, MSFT, TSLA, NVDA vs SPY benchmark:
+Results are generated live by the backtesting engine and are visible in the Backtest tab of the dashboard after starting the app. To generate results yourself, start the backend and click the Backtest tab. The engine will run FinBERT on current headlines for each ticker, apply the same four-condition signal rules used by the live bot, simulate trades over the past 12 months using vectorbt, and display the results alongside the SPY benchmark.
+
+The equity curve is also exported automatically as `equity_curve.png` and `equity_curve.html` in the backend folder.
 
 | Metric | AlphaLens Strategy | SPY Benchmark |
 |--------|--------------------|---------------|
@@ -184,18 +287,18 @@ Results are generated dynamically by running the backtesting engine. Live result
 | Sharpe Ratio | see dashboard | see dashboard |
 | Sortino Ratio | see dashboard | see dashboard |
 | Max Drawdown | see dashboard | see dashboard |
-| Win Rate | see dashboard | - |
-| Total Trades | see dashboard | - |
+| Win Rate | see dashboard | not applicable |
+| Total Trades | see dashboard | not applicable |
 
-To generate results: start the backend and open the Backtest tab. The engine runs FinBERT on live headlines for each ticker, builds signals using the same MA50 + conviction thresholds as the live bot, and runs a vectorbt portfolio simulation with stop-loss and take-profit applied. The equity curve chart is also exported as `equity_curve.png` and `equity_curve.html` in the backend folder.
+---
 
 ## The Bigger Picture
 
-Markets price in information. The traders who can process that information fastest and most accurately have a structural edge. For individual traders and small teams, keeping up with news at scale has historically been impractical.
+Stock markets move on information. When a company reports better earnings than expected, its price goes up. When a product gets recalled, it goes down. The people who read that information first and act on it fastest are the ones who profit. Everyone else reacts after the move has already happened.
 
-AlphaLens demonstrates that financial sentiment analysis with a domain-specific NLP model can be integrated with standard technical analysis rules to produce an automated, explainable signal pipeline. FinBERT brings financial NLP accuracy that would otherwise require significant resources to replicate. vectorbt brings institutional-grade backtesting to a Python backend. The combination produces a platform that is transparent about every decision it makes, which matters in trading as much as the decisions themselves.
+AlphaLens is a demonstration that you can automate the reading and the reacting. A domain-specific AI model handles the news. A transparent rule engine handles the decision. Volatility-adjusted risk management handles the exits. None of the logic is hidden or mysterious. Every signal comes with a plain-language explanation of exactly what was checked and why the decision was made.
 
-A signal that used to require reading dozens of headlines and cross-referencing price charts now happens automatically. That is the whole point.
+The result is a system that can process four stocks, analyze dozens of headlines, compute technical indicators, and output a reasoned BUY, SELL, or HOLD recommendation every 60 seconds without any human involvement. That is the whole point.
 
 ---
 
