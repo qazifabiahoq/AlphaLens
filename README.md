@@ -30,31 +30,85 @@ AlphaLens was built to close that gap.
 
 ## What AlphaLens Does
 
-AlphaLens is a stock signal platform that monitors AAPL, MSFT, TSLA, and NVDA in real time. For each ticker it pulls live financial news headlines, scores them with FinBERT (a financial-domain NLP model), checks whether the current price is above or below the 50-day moving average, and combines those two signals into a BUY, SELL, or HOLD decision.
+AlphaLens is a stock signal platform that monitors AAPL, MSFT, TSLA, and NVDA in real time. For each ticker it pulls live financial news headlines, scores them with FinBERT (a financial-domain NLP model), then evaluates four rule-based conditions — trend, momentum (RSI), volume, and sentiment conviction — to produce a BUY, SELL, or HOLD decision. All four entry conditions must pass simultaneously. Any one exit condition is enough to close a position.
 
-The user opens a dashboard and sees every tracked ticker with its current sentiment score, conviction level, latest headlines, price data, and trading signal, all updated every 60 seconds. The reasoning behind every signal is visible: how many headlines were analyzed, what the conviction score was, and whether the price trend confirmed or contradicted the sentiment reading.
+The user opens a dashboard and sees every tracked ticker with its current sentiment score, conviction level, latest headlines, price data, and trading signal, all updated every 60 seconds. The reasoning behind every signal is fully transparent: which of the four conditions passed or failed, what the RSI and volume readings were, how many headlines were analyzed, and exactly why the system landed on BUY, SELL, or HOLD.
 
-A paper trading bot runs in the background on a 5-minute loop, executing simulated trades when thresholds are met and tracking open positions with stop-loss and take-profit rules. A backtesting engine runs the full strategy across 12 months of historical data and benchmarks the result against the S&P 500.
+A paper trading bot runs in the background on a 5-minute loop, sizing positions by risking 1% of the portfolio per trade and setting stops dynamically using the Average True Range. A backtesting engine runs the full strategy across 12 months of historical data and benchmarks the result against the S&P 500.
 
 ## How the Signal Works
 
-The signal logic combines two independent inputs.
+The signal logic combines four independent inputs. All four must agree to enter a trade. Any one of three conditions is enough to exit.
 
-The first input is news sentiment. AlphaLens feeds up to 10 live headlines per ticker into FinBERT, a BERT model fine-tuned specifically on financial text by ProsusAI. Generic sentiment models trained on social media or product reviews perform poorly on financial language, where the same word can be bullish or bearish depending on context. FinBERT was trained on financial news, analyst reports, and earnings calls. The model returns a probability distribution across positive, neutral, and negative labels. AlphaLens converts that into a conviction score from 0 to 10, penalizing ambiguous results where the neutral probability is high. If FinBERT cannot load (no internet or low RAM), a keyword-based fallback keeps the system running.
+### The Four Entry Conditions
 
-The second input is price trend. AlphaLens fetches 12 months of daily OHLCV data via yfinance and computes the 50-day moving average. If the current price is above the MA50, the trend is bullish. If below, it is not.
+**1. Trend filter (50-day MA)**
+AlphaLens fetches 12 months of daily OHLCV data via yfinance and computes the 50-day simple moving average. Price must be above MA50 to qualify. A stock below its 50-day MA is in a downtrend and is excluded regardless of how positive the news looks.
+
+**2. RSI momentum filter (RSI-14)**
+The Relative Strength Index is computed using Wilder's method over 14 periods. RSI must fall between 30 and 70 to enter. Below 30 means the stock is a falling knife — momentum is too negative. Above 70 means the stock is already overbought and chasing the move is risky. This window filters out both exhausted rallies and accelerating selloffs.
+
+**3. Volume confirmation filter**
+Current-day volume must be at least 1.1× the 20-day rolling average volume. A price move without elevated volume is suspect — it may be a low-conviction drift rather than real buying pressure. This filter ensures trades are backed by genuine market participation.
+
+**4. AI sentiment filter (FinBERT conviction ≥ 7.0)**
+AlphaLens feeds up to 10 live headlines per ticker into FinBERT, a BERT model fine-tuned specifically on financial text by ProsusAI. Generic sentiment models trained on social media or product reviews perform poorly on financial language, where the same word can be bullish or bearish depending on context. FinBERT was trained on financial news, analyst reports, and earnings calls. The model returns a probability distribution across positive, neutral, and negative labels. AlphaLens converts that into a conviction score from 0 to 10, penalizing ambiguous results where the neutral probability is high. Conviction must reach 7.0 or above to pass. If FinBERT cannot load (no internet or low RAM), a keyword-based fallback keeps the system running.
+
+### The Entry and Exit Gates
 
 The decision rule is explicit and deterministic:
 
-- **BUY**: price is above the 50-day MA and FinBERT conviction is at or above 7.0 out of 10
-- **SELL**: price is below the 50-day MA, or conviction falls below 3.0
-- **HOLD**: everything else
+**BUY** — all four conditions must pass simultaneously:
+- Price is above the 50-day MA (uptrend confirmed)
+- RSI(14) is between 30 and 70 (not overbought, not a falling knife)
+- Volume is at least 1.1× the 20-day average (real buying pressure)
+- FinBERT conviction is at or above 7.0 out of 10 (AI confirms strongly positive news)
 
-Neither signal alone is enough to trigger a BUY. Both the AI sentiment reading and the technical trend must agree.
+**SELL** — triggered if any one of the following is true:
+- Price drops below the 50-day MA (trend broken)
+- RSI(14) rises above 75 (overbought, take profit)
+- FinBERT conviction falls below 3.0 (sentiment turned negative)
+- Price hits the ATR-based stop-loss level
+- Price hits the ATR-based take-profit level
+
+**HOLD** — everything else
+
+No single input alone triggers a BUY. All four must align. Exits are asymmetric by design: entry requires consensus, exit requires only one warning sign. This keeps the system conservative on entries and fast on risk management.
+
+### ATR-Based Stop-Loss and Take-Profit
+
+Rather than fixed percentage stops, AlphaLens uses volatility-adjusted levels computed from the Average True Range (ATR-14). ATR measures the average daily price range over 14 days, giving a realistic estimate of how much a stock normally moves.
+
+- **Stop-loss**: entry price minus 1.5× ATR(14)
+- **Take-profit**: entry price plus 3× ATR(14)
+
+This produces a 2:1 reward-to-risk ratio on every trade. A stock that moves $3 per day has a wider stop than one that moves $0.50, which prevents stop-outs caused by normal volatility rather than a real reversal.
+
+### Position Sizing
+
+The bot risks exactly 1% of the paper portfolio per trade. Position size is calculated as:
+
+```
+quantity = floor((portfolio × 1%) / (1.5 × ATR))
+```
+
+This means fewer shares are bought when a stock is more volatile. A volatile stock has a larger ATR, which means a wider stop-loss distance, which reduces the number of shares needed to keep the dollar risk at 1%. The bet scales down automatically as volatility rises.
+
+### Keyword Fallback (No Model Needed)
+
+If FinBERT cannot load — due to no internet connection, insufficient RAM, or a missing model file — AlphaLens falls back to a deterministic keyword scoring system. The fallback counts positive and negative word matches across all headlines and produces a label and raw score without any ML inference.
+
+Positive keywords: `beat, beats, surge, record, growth, profit, bullish, upgrade, buy, strong, rally, gain, exceed, outperform, revenue, positive, up, rise, high, launch, partnership`
+
+Negative keywords: `miss, misses, fall, drop, loss, bearish, downgrade, sell, weak, decline, recall, lawsuit, fine, cut, warning, risk, fraud, layoff, crash, concern, debt`
+
+The score is computed as the dominant count divided by the total keyword count. If positive matches exceed negative, the label is positive and the score is `pos / (pos + neg)`. If equal, it is neutral with a score of 0.5. This score is then scaled to the same 0–10 conviction range used by FinBERT, so the rest of the signal pipeline does not need to change.
 
 ## The Paper Trading Bot
 
-The bot (`bot.py`) runs a continuous loop every 5 minutes. At each interval it checks all open positions for stop-loss and take-profit exits, then cycles through every ticker: fetches fresh news, scores sentiment with FinBERT, computes the signal, and executes a simulated trade if the threshold is met. Every trade is logged to the terminal, to `alphalens.log`, and persisted in `trades.json`. Position state is tracked in memory with entry prices and P&L calculations updated at each scan.
+The bot (`bot.py`) runs a continuous loop every 5 minutes. At each interval it first checks all open positions against their ATR-based stop-loss and take-profit levels. If either level is breached, the position is closed and the P&L is logged. Then it cycles through every ticker: fetches fresh news, scores sentiment with FinBERT (or the keyword fallback), computes all four technical indicators, evaluates the entry and exit gates, and executes a simulated trade if the conditions are met.
+
+When a BUY signal fires, the bot calculates position size using the 1%-risk / ATR formula before entering. When a SELL signal fires — whether from the rule engine or a stop/take-profit hit — the position is closed and final P&L is reported. Every trade is logged to the terminal, to `alphalens.log`, and persisted in `trades.json`. Position state is tracked in memory across scans.
 
 ## Backtesting
 
@@ -76,10 +130,17 @@ AlphaLens is a full-stack platform with a Next.js 13 frontend built with TypeScr
 |-----------|-------|
 | Tickers | AAPL, MSFT, TSLA, NVDA |
 | MA window | 50 days |
+| RSI period | 14 |
+| RSI entry range | 30 – 70 |
+| RSI exit threshold | above 75 |
+| Volume MA window | 20 days |
+| Volume minimum | 1.1× 20-day average |
+| ATR period | 14 |
+| Stop-loss | entry − 1.5× ATR(14) |
+| Take-profit | entry + 3.0× ATR(14) (2:1 R/R) |
 | BUY conviction threshold | 7.0 / 10 or above |
 | SELL conviction threshold | below 3.0 / 10 |
-| Stop-loss | 2% per trade |
-| Take-profit | 5% per trade |
+| Portfolio risk per trade | 1% |
 | Bot scan interval | 5 minutes |
 | Backtest period | 12 months |
 | Starting capital | $10,000 |
