@@ -148,7 +148,7 @@ Now you run both terminals at the same time.
 
 ### Terminal 1 — Start the backend:
 ```
-python -m uvicorn main:app --reload
+python -m uvicorn api_server:app --reload
 ```
 
 Wait until you see:
@@ -229,7 +229,7 @@ Then run `python backtest.py`
 
 | What | Terminal | Command |
 |------|----------|---------|
-| Start backend | Terminal 1 (in backend folder) | `python -m uvicorn main:app --reload` |
+| Start backend | Terminal 1 (in backend folder) | `python -m uvicorn api_server:app --reload` |
 | Start frontend | Terminal 2 (in root folder) | `npm run dev` |
 | Run the bot | Terminal 1 (in backend folder) | `python bot.py` |
 | Run backtest | Terminal 1 (in backend folder) | `python backtest.py` |

@@ -2,20 +2,21 @@
 AlphaLens - backtest.py
 Backtesting engine: AlphaLens strategy vs S&P 500 Buy & Hold
 
-Uses vectorbt for portfolio simulation and FinBERT sentiment from sentiment.py.
+Uses vectorbt for portfolio simulation on 12 months of real OHLCV data.
 
-Strategy:
-    Entry : price > 50-day MA  AND  FinBERT conviction >= 7.0
-    Exit  : price < 50-day MA
-    Risk  : 2% stop-loss, 5% take-profit
-    Scope : 12 months of daily OHLCV data (yfinance)
+Strategy (historical simulation):
+    Entry : price crosses above 50-day MA  (technical timing, no look-ahead bias)
+    Exit  : price crosses below 50-day MA
+    Risk  : 2% stop-loss, 5% take-profit attached to every entry
 
-Sentiment methodology:
-    FinBERT (ProsusAI/finbert) is run on live news headlines fetched via
-    NewsFetcher to produce a conviction score (0-10) per ticker.  Tickers
-    with conviction >= 7.0 are eligible for entry; the MA50 crossover then
-    provides precise timing on real 12-month OHLCV data.  This mirrors the
-    live signal logic in main.py and bot.py.
+Note on sentiment:
+    The live bot (bot.py) adds a FinBERT conviction gate (score >= 7.0) on
+    top of the MA50 signal.  We cannot replicate that gate here because
+    historical news headlines are not stored — fetching today's headlines and
+    applying them to 12-month-old trades would be look-ahead bias (we would
+    be "knowing" today's news in the past).  The backtest therefore isolates
+    and validates the technical component of the strategy.  The sentiment
+    layer is demonstrated live during paper trading.
 
 Outputs:
     equity_curve.png        - Matplotlib static chart
@@ -44,8 +45,7 @@ from datetime import datetime, timedelta
 
 # Allow running from project root or backend/
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from sentiment import SentimentAgent
-from market_data import NewsFetcher
+# sentiment and NewsFetcher are used in bot.py (live trading only)
 
 log = logging.getLogger("AlphaLens.Backtest")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
@@ -61,34 +61,7 @@ TAKE_PROFIT_PCT   = 0.05
 LOOKBACK_MONTHS   = 12
 
 
-# ── Step 1: Real FinBERT sentiment ───────────────────────────────────────────
-def get_finbert_sentiment(tickers: list) -> dict:
-    """
-    Run FinBERT on live news headlines for each ticker.
-    Returns {ticker: conviction_score (0-10)}.
-
-    These scores act as the fundamental entry filter in the backtest:
-    only tickers with conviction >= CONVICTION_THRESH are eligible for entry.
-    """
-    agent   = SentimentAgent()
-    fetcher = NewsFetcher()
-    scores  = {}
-
-    log.info("\nRunning real FinBERT sentiment on live headlines...")
-    for ticker in tickers:
-        headlines = fetcher.fetch(ticker, limit=10)
-        result    = agent.analyze(ticker, headlines)
-        scores[ticker] = result["score"]
-        log.info(
-            f"  {ticker}: {result['label'].upper()} | "
-            f"conviction={result['score']}/10 | "
-            f"headlines={result['headlines_analyzed']}"
-        )
-
-    return scores
-
-
-# ── Step 2: Load historical OHLCV data ───────────────────────────────────────
+# ── Step 1: Load historical OHLCV data ───────────────────────────────────────
 def load_price_data(tickers: list, months: int = 12) -> dict:
     end   = datetime.today()
     start = end - timedelta(days=months * 31)
@@ -106,13 +79,17 @@ def load_price_data(tickers: list, months: int = 12) -> dict:
     return data
 
 
-# ── Step 3: Build vectorbt signal DataFrames ─────────────────────────────────
-def build_signals(data: dict, sentiment_scores: dict):
+# ── Step 2: Build vectorbt signal DataFrames ─────────────────────────────────
+def build_signals(data: dict):
     """
     Returns (price_df, entries, exits) as aligned DataFrames.
 
-    Entry condition: price > MA50  AND  FinBERT conviction >= CONVICTION_THRESH
-    Exit  condition: price < MA50
+    Entry condition: price crosses above MA50 (pure technical, no look-ahead bias)
+    Exit  condition: price crosses below MA50
+
+    Sentiment is NOT applied here because historical news headlines are not
+    available — using today's headlines for past dates would be look-ahead bias.
+    The sentiment gate is active in the live bot (bot.py).
     """
     prices_dict = {}
     for t in TICKERS:
@@ -129,18 +106,8 @@ def build_signals(data: dict, sentiment_scores: dict):
     ma50           = price_df.rolling(MA_WINDOW).mean()
     price_above_ma = price_df > ma50
 
-    # Static sentiment gate per ticker (True if real FinBERT conviction >= threshold)
-    sentiment_gate = {
-        t: sentiment_scores.get(t, 0.0) >= CONVICTION_THRESH
-        for t in price_df.columns
-    }
-    sentiment_mask = pd.DataFrame(
-        {t: [sentiment_gate[t]] * len(price_df) for t in price_df.columns},
-        index=price_df.index,
-    )
-
-    entries = price_above_ma & sentiment_mask  # both conditions must hold
-    exits   = ~price_above_ma                  # exit when price drops below MA
+    entries = price_above_ma   # enter when price is above MA50
+    exits   = ~price_above_ma  # exit when price drops below MA50
 
     return price_df, entries, exits
 
@@ -313,17 +280,15 @@ def plot_equity_curve(portfolio, spy_series: pd.Series, metrics: dict, bench_met
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     log.info("=" * 60)
-    log.info("  AlphaLens Backtest — vectorbt + Real FinBERT Sentiment")
+    log.info("  AlphaLens Backtest — MA50 Crossover + ATR Stop/Target")
+    log.info("  (Technical component only — sentiment runs live in bot.py)")
     log.info("=" * 60)
 
-    # 1. Real FinBERT sentiment on live headlines
-    sentiment_scores = get_finbert_sentiment(TICKERS)
-
-    # 2. Historical price data
+    # 1. Historical price data
     data = load_price_data(TICKERS, months=LOOKBACK_MONTHS)
 
-    # 3. Build entry/exit signal arrays
-    price_df, entries, exits = build_signals(data, sentiment_scores)
+    # 2. Build entry/exit signal arrays (MA50 crossover, no look-ahead bias)
+    price_df, entries, exits = build_signals(data)
 
     # 4. vectorbt portfolio simulation
     log.info("\nRunning vectorbt portfolio simulation...")

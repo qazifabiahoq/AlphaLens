@@ -330,7 +330,6 @@ def get_backtest():
 
     try:
         from backtest import (
-            get_finbert_sentiment,
             load_price_data,
             build_signals,
             run_vectorbt_backtest,
@@ -342,11 +341,10 @@ def get_backtest():
             INITIAL_CAPITAL,
         )
 
-        log.info("Running backtest via vectorbt + FinBERT...")
+        log.info("Running backtest via vectorbt (MA50 crossover, no look-ahead bias)...")
 
-        sentiment_scores         = get_finbert_sentiment(BT_TICKERS)
         data                     = load_price_data(BT_TICKERS, months=LOOKBACK_MONTHS)
-        price_df, entries, exits = build_signals(data, sentiment_scores)
+        price_df, entries, exits = build_signals(data)
         portfolio                = run_vectorbt_backtest(price_df, entries, exits)
 
         spy_close = data[BT_BENCH]["Close"]

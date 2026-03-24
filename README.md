@@ -10,7 +10,7 @@ An AI-powered trading assistant that reads financial news, scores how positive o
 ```
 # Terminal 1 - backend
 cd backend
-python -m uvicorn main:app --reload
+python -m uvicorn api_server:app --reload
 
 # Terminal 2 - frontend
 npm run dev
@@ -178,7 +178,9 @@ Every action is written to the terminal, saved to `alphalens.log`, and stored in
 
 Before trusting any strategy with real money, you should test it on historical data. Backtesting means running the exact same rules on past price data to see how the strategy would have performed.
 
-AlphaLens uses a library called vectorbt to simulate the full strategy on 12 months of historical price data for all four stocks. FinBERT is run on current headlines as a stand-in for historical sentiment (since past headlines are not stored). The simulated portfolio starts with $10,000.
+AlphaLens uses a library called vectorbt to simulate the strategy on 12 months of historical price data for all four stocks. The simulated portfolio starts with $10,000.
+
+The backtest tests the technical component of the strategy: the 50-day moving average crossover with ATR-based stop-loss and take-profit. The FinBERT sentiment gate is not applied in the backtest because historical news headlines are not stored. Using today's headlines to judge trades from 12 months ago would be look-ahead bias, meaning the backtest would be cheating by using information that did not exist at trade time. The sentiment layer is validated through live paper trading in bot.py instead.
 
 Results are compared against SPY, which is an ETF that tracks the S&P 500 index. The S&P 500 is a basket of 500 large US companies and is the standard benchmark that most investment strategies are measured against. If AlphaLens cannot beat simply buying and holding SPY, that is an important thing to know.
 
