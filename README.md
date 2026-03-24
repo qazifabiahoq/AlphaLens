@@ -34,11 +34,11 @@ AlphaLens was built to automate that reading and decision-making process.
 
 AlphaLens watches four stocks in real time: Apple (AAPL), Microsoft (MSFT), Tesla (TSLA), and NVIDIA (NVDA).
 
-Every 60 seconds it pulls the latest news headlines for each stock, runs those headlines through an AI model to figure out whether the news is positive or negative, checks a few price-based signals, and then outputs a BUY, SELL, or HOLD recommendation.
+Every 5 minutes the trading bot pulls the latest news headlines for each stock, runs those headlines through an AI model to figure out whether the news is positive or negative, checks a few price-based signals, and then outputs a BUY, SELL, or HOLD recommendation. The dashboard display refreshes every 60 seconds to show the latest data.
 
 It does not just look at one thing. It checks four separate conditions before recommending a buy. If even one of those conditions fails, it stays out of the trade. This makes the system conservative by design, which is a good thing when real money is involved.
 
-There is also a simulated trading bot that runs in the background and pretends to buy and sell with fake money. This is called paper trading, and it lets you test the strategy without any financial risk. A separate backtesting tool tests the same strategy on the past 12 months of real historical data to see how it would have performed.
+There is also a simulated trading bot that runs in the background and pretends to buy and sell with fake money. This is called paper trading, and it lets you test the strategy without any financial risk. A separate backtesting tool tests the technical component of the strategy on the past 12 months of real historical data to see how it would have performed.
 
 ---
 
@@ -243,7 +243,7 @@ The backtest produces:
 - Win rate (the percentage of trades that were profitable)
 - Total trade count
 
-The equity curve is saved as both a static image (`equity_curve.png`) and an interactive chart (`equity_curve.html`) in the backend folder.
+The equity curve is saved as both a static image (`equity_curve.png`) and an interactive chart (`backtest_results.html`) in the backend folder.
 
 ---
 
@@ -277,7 +277,7 @@ Headlines:
 {headlines}
 ```
 
-This prompt is stored and returned with every signal response under the field `prompt_used`. This makes the system auditable: you can always see exactly what text was fed to the model and what score came back.
+This prompt template is documented in `sentiment.py` alongside the scoring logic, making the system auditable: you can always see exactly what context the model was given and how the score was calculated.
 
 It is worth noting that FinBERT does not respond to this prompt the way a chatbot like ChatGPT would. FinBERT is a classification model, not a generative one. It reads each headline and outputs probabilities for three labels. The prompt structure is used here to document the task context and is included in the API output for transparency and explainability purposes.
 
@@ -330,7 +330,7 @@ FinBERT downloads automatically from HuggingFace the first time you run the back
 
 Results are generated live by the backtesting engine and are visible in the Backtest tab of the dashboard after starting the app. To generate results yourself, start the backend and click the Backtest tab. The engine downloads 12 months of historical price data, applies the MA50 crossover signal with ATR-based stop-loss and take-profit, simulates trades using vectorbt, and displays the results alongside the SPY benchmark.
 
-The equity curve is also exported automatically as `equity_curve.png` and `equity_curve.html` in the backend folder.
+The equity curve is also exported automatically as `equity_curve.png` and `backtest_results.html` in the backend folder.
 
 | Metric | AlphaLens Strategy | SPY Benchmark |
 |--------|--------------------|---------------|
