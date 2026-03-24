@@ -42,6 +42,56 @@ There is also a simulated trading bot that runs in the background and pretends t
 
 ---
 
+## Data Infrastructure: The Body
+
+The data pipeline is split into two Python classes that live in `market_data.py`.
+
+**MarketDataHandler** is the main data class. It fetches historical and live OHLCV data (Open, High, Low, Close, Volume) using yfinance (Yahoo Finance). Yahoo Finance is used as the data source because it is free, requires no API key, and provides reliable historical data going back years. The handler downloads a full year of daily price data for each ticker, which is then used to compute all technical indicators (moving averages, RSI, ATR, volume ratios). The OHLCV data is returned as a cleaned pandas DataFrame with a DatetimeIndex, with missing values dropped and column names normalized.
+
+**NewsFetcher** is the unstructured data class. It pulls recent news headlines for a specific stock ticker from the Yahoo Finance RSS feed. To avoid hitting the feed too often (rate limiting), every result is cached in memory for 15 minutes. If the feed is unavailable or returns an error, the class returns an empty list gracefully so the rest of the system keeps running. Up to 10 headlines per ticker are passed to FinBERT for sentiment scoring.
+
+These two classes together form the data layer of the system. MarketDataHandler feeds the technical indicators. NewsFetcher feeds the LLM. Neither requires any API key or paid subscription.
+
+---
+
+## Agent Architecture: Brain and Body
+
+AlphaLens is structured as two parts that work together.
+
+**The Body** is the quantitative data and execution layer. It fetches real market prices, computes technical indicators (MA50, RSI, ATR, volume), manages open positions, monitors stop-loss and take-profit levels, and executes paper trades. This part lives in `bot.py` and `market_data.py`. It knows how to measure price movement but it cannot read or interpret text.
+
+**The Brain** is the LLM layer. It reads news headlines and decides whether the news is good, bad, or neutral. It produces a conviction score from 0 to 10 that tells the Body how strongly the news supports a trade. This part lives in `sentiment.py`. The model used is FinBERT (ProsusAI/finbert), a version of BERT that was fine-tuned specifically on financial news, analyst reports, and earnings transcripts. It understands financial language in a way that general-purpose models do not.
+
+**The Decision Flow:**
+```
+News headlines  →  FinBERT (Brain)  →  conviction score
+Price data      →  Indicators (Body) →  trend, RSI, volume checks
+                                          ↓
+                              All 4 conditions met?
+                                    ↓         ↓
+                                  BUY        HOLD
+                                    ↓
+                    Set stop-loss and take-profit (ATR-based)
+                                    ↓
+                    Log paper trade to trades.json
+```
+
+The key design principle is that the LLM never sees price numbers and never makes the final trade decision alone. It only reads text and outputs a score. The Body then combines that score with technical conditions to decide whether to act. This separation makes the system both more accurate and more explainable.
+
+---
+
+## Why LLMs for This Task
+
+LLMs are appropriate here because the input is unstructured text, which is exactly what language models are designed to handle.
+
+When a news headline says "Tesla recalls 2 million vehicles," a language model trained on financial text can recognize that recalls typically hurt stock prices and score that headline as negative. A purely numerical model cannot read that sentence at all.
+
+LLMs are NOT appropriate for predicting prices directly. If you feed a stock chart's numbers into an LLM and ask it to predict tomorrow's price, you will get poor results. LLMs are not calculators. They do not have an internal model of market mechanics or time series patterns. Asking an LLM to predict price direction from numbers is using the wrong tool for the job.
+
+AlphaLens uses the LLM only for what it is actually good at: reading text, understanding context, and classifying sentiment. The price prediction and timing come from traditional quantitative indicators (moving averages, RSI, ATR) that are mathematically suited to that job. Combining both gives a more complete picture than either approach alone.
+
+---
+
 ## How the Signal Works
 
 Think of the signal engine as a checklist. Before AlphaLens recommends buying a stock, it runs through four checks. All four must pass. If any one of them fails, the answer is not BUY.
@@ -278,7 +328,7 @@ FinBERT downloads automatically from HuggingFace the first time you run the back
 
 ## Backtest Results
 
-Results are generated live by the backtesting engine and are visible in the Backtest tab of the dashboard after starting the app. To generate results yourself, start the backend and click the Backtest tab. The engine will run FinBERT on current headlines for each ticker, apply the same four-condition signal rules used by the live bot, simulate trades over the past 12 months using vectorbt, and display the results alongside the SPY benchmark.
+Results are generated live by the backtesting engine and are visible in the Backtest tab of the dashboard after starting the app. To generate results yourself, start the backend and click the Backtest tab. The engine downloads 12 months of historical price data, applies the MA50 crossover signal with ATR-based stop-loss and take-profit, simulates trades using vectorbt, and displays the results alongside the SPY benchmark.
 
 The equity curve is also exported automatically as `equity_curve.png` and `equity_curve.html` in the backend folder.
 
