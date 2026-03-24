@@ -55,7 +55,7 @@ TICKERS           = ["AAPL", "MSFT", "TSLA", "NVDA"]
 BENCHMARK_TICKER  = "SPY"
 INITIAL_CAPITAL   = 10_000.0
 MA_WINDOW         = 50
-CONVICTION_THRESH = 7.0   # FinBERT conviction (0-10 scale)
+CONVICTION_THRESH = 7.0   # live bot threshold (not applied in backtest — no historical news)
 STOP_LOSS_PCT     = 0.02
 TAKE_PROFIT_PCT   = 0.05
 LOOKBACK_MONTHS   = 12
@@ -112,7 +112,7 @@ def build_signals(data: dict):
     return price_df, entries, exits
 
 
-# ── Step 4: vectorbt portfolio simulation ────────────────────────────────────
+# ── Step 3: vectorbt portfolio simulation ────────────────────────────────────
 def run_vectorbt_backtest(price_df: pd.DataFrame, entries: pd.DataFrame, exits: pd.DataFrame):
     """
     Use vectorbt.Portfolio.from_signals() to simulate the strategy.
@@ -142,7 +142,7 @@ def run_vectorbt_backtest(price_df: pd.DataFrame, entries: pd.DataFrame, exits: 
     return portfolio
 
 
-# ── Step 5: Performance metrics ───────────────────────────────────────────────
+# ── Step 4: Performance metrics ───────────────────────────────────────────────
 def calc_portfolio_metrics(portfolio) -> dict:
     total_value = portfolio.value().sum(axis=1)
     returns     = total_value.pct_change().dropna()
@@ -194,7 +194,7 @@ def calc_benchmark_metrics(spy_series: pd.Series) -> dict:
     }
 
 
-# ── Step 6: Plot equity curve ─────────────────────────────────────────────────
+# ── Step 5: Plot equity curve ─────────────────────────────────────────────────
 def plot_equity_curve(portfolio, spy_series: pd.Series, metrics: dict, bench_metrics: dict):
     total_value = portfolio.value().sum(axis=1)
     strat_eq    = total_value / total_value.iloc[0] * INITIAL_CAPITAL
@@ -209,7 +209,7 @@ def plot_equity_curve(portfolio, spy_series: pd.Series, metrics: dict, bench_met
     ax.set_facecolor("#0F172A")
 
     ax.plot(strat_eq.index, strat_eq, color="#F59E0B", linewidth=2.5,
-            label="AlphaLens (vectorbt + FinBERT)")
+            label="AlphaLens (MA50 + ATR stops)")
     ax.plot(spy_eq.index,   spy_eq,   color="#64748B", linewidth=1.8,
             linestyle="--", label="SPY Buy & Hold")
     ax.fill_between(strat_eq.index, strat_eq, spy_eq,
@@ -226,7 +226,7 @@ def plot_equity_curve(portfolio, spy_series: pd.Series, metrics: dict, bench_met
     ax.set_xlabel("Date", color="#94A3B8", fontsize=10)
     ax.set_ylabel("Portfolio Value", color="#94A3B8", fontsize=10)
     ax.set_title(
-        "AlphaLens: Equity Curve vs S&P 500  (12-Month Backtest | vectorbt + FinBERT)",
+        "AlphaLens: Equity Curve vs S&P 500  (12-Month Backtest | MA50 Crossover + ATR Stops)",
         color="white", fontsize=13, fontweight="bold", pad=15,
     )
 
@@ -257,7 +257,7 @@ def plot_equity_curve(portfolio, spy_series: pd.Series, metrics: dict, bench_met
         fig2 = go.Figure()
         fig2.add_trace(go.Scatter(
             x=list(strat_eq.index), y=list(strat_eq),
-            name="AlphaLens (vectorbt + FinBERT)",
+            name="AlphaLens (MA50 + ATR stops)",
             line=dict(color="#F59E0B", width=3),
         ))
         fig2.add_trace(go.Scatter(
@@ -290,17 +290,17 @@ def main():
     # 2. Build entry/exit signal arrays (MA50 crossover, no look-ahead bias)
     price_df, entries, exits = build_signals(data)
 
-    # 4. vectorbt portfolio simulation
+    # 3. vectorbt portfolio simulation
     log.info("\nRunning vectorbt portfolio simulation...")
     portfolio = run_vectorbt_backtest(price_df, entries, exits)
 
-    # 5. SPY benchmark series
+    # 4. SPY benchmark series
     spy_close = data[BENCHMARK_TICKER]["Close"]
     if isinstance(spy_close, pd.DataFrame):
         spy_close = spy_close.iloc[:, 0]
     spy_close.index = pd.to_datetime(spy_close.index)
 
-    # 6. Metrics
+    # 5. Metrics
     metrics       = calc_portfolio_metrics(portfolio)
     bench_metrics = calc_benchmark_metrics(spy_close)
 
@@ -318,7 +318,7 @@ def main():
     log.info(f"  SPY B&H    Max Drawdown    : {bench_metrics['max_drawdown']}%")
     log.info("─" * 60)
 
-    # 7. Charts
+    # 6. Charts
     plot_equity_curve(portfolio, spy_close, metrics, bench_metrics)
     log.info("\nBacktest complete ✓")
 
