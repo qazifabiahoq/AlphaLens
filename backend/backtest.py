@@ -105,9 +105,10 @@ def build_signals(data: dict):
 
     ma50           = price_df.rolling(MA_WINDOW).mean()
     price_above_ma = price_df > ma50
+    prev_above_ma  = price_above_ma.shift(1).fillna(False)
 
-    entries = price_above_ma   # enter when price is above MA50
-    exits   = ~price_above_ma  # exit when price drops below MA50
+    entries = price_above_ma & ~prev_above_ma   # crosses ABOVE MA50 (crossover, not level)
+    exits   = ~price_above_ma & prev_above_ma   # crosses BELOW MA50 (crossunder, not level)
 
     return price_df, entries, exits
 
@@ -165,7 +166,8 @@ def calc_portfolio_metrics(portfolio) -> dict:
         trades   = portfolio.trades.records_readable
         total_tr = len(trades)
         win_rate = round(float((trades["PnL"] > 0).mean() * 100), 1) if total_tr > 0 else 0.0
-        avg_hold = round(float(trades["Duration"].dt.days.mean()), 1) if total_tr > 0 else 0.0
+        dur = trades["Duration"]
+        avg_hold = round(float(dur.dt.days.mean() if hasattr(dur, "dt") else dur.mean()), 1) if total_tr > 0 else 0.0
     except Exception:
         total_tr, win_rate, avg_hold = 0, 0.0, 0.0
 
