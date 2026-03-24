@@ -279,7 +279,7 @@ Headlines:
 
 This prompt template is documented in `sentiment.py` alongside the scoring logic, making the system auditable: you can always see exactly what context the model was given and how the score was calculated.
 
-It is worth noting that FinBERT does not respond to this prompt the way a chatbot like ChatGPT would. FinBERT is a classification model, not a generative one. It reads each headline and outputs probabilities for three labels. The prompt structure is used here to document the task context and is included in the API output for transparency and explainability purposes.
+It is worth noting that FinBERT does not respond to this prompt the way a chatbot like ChatGPT would. FinBERT is a classification model, not a generative one. It reads each headline and outputs probabilities for three labels. The prompt structure is used here to document the task context and explain what the model is being asked to do.
 
 The actual scoring formula that converts those probabilities into a usable number is:
 
