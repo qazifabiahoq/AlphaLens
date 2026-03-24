@@ -350,7 +350,7 @@ Stock markets move on information. When a company reports better earnings than e
 
 AlphaLens is a demonstration that you can automate the reading and the reacting. A domain-specific AI model handles the news. A transparent rule engine handles the decision. Volatility-adjusted risk management handles the exits. None of the logic is hidden or mysterious. Every signal comes with a plain-language explanation of exactly what was checked and why the decision was made.
 
-The result is a system that can process four stocks, analyze dozens of headlines, compute technical indicators, and output a reasoned BUY, SELL, or HOLD recommendation every 60 seconds without any human involvement. That is the whole point.
+The result is a system that can process four stocks, analyze dozens of headlines, compute technical indicators, and output a reasoned BUY, SELL, or HOLD recommendation every 5 minutes without any human involvement. That is the whole point.
 
 ---
 
