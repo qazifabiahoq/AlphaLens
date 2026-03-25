@@ -24,6 +24,7 @@ export interface SignalData {
   day_low: number;
   open: number;
   headlines: Headline[];
+  guardrail_warnings: string[];
 }
 
 export interface Headline {

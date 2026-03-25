@@ -73,6 +73,11 @@ RISK_PER_TRADE    = 0.01    # Risk 1% of portfolio per trade
 POLL_INTERVAL_SEC = 300     # Seconds between full scans (5 min)
 TRADES_FILE       = Path("trades.json")
 
+# Guardrails
+MAX_DAILY_TRADES_PER_TICKER = 1     # Max BUY entries per ticker per calendar day (prevents overtrading)
+MAX_PORTFOLIO_DRAWDOWN      = 0.10  # Circuit breaker: stop new entries if session losses exceed 10% of portfolio
+MIN_HEADLINES_FOR_SIGNAL    = 3     # Warn if FinBERT scored fewer than this many headlines (low confidence)
+
 
 # ── Indicator helpers ─────────────────────────────────────────────────────────
 def _calc_rsi(close: pd.Series, period: int = RSI_PERIOD) -> float:
@@ -123,7 +128,10 @@ class AlphaLensBot:
         self.agent     = SentimentAgent()
         self.market    = MarketDataHandler()
         self.positions: dict = {}
-        log.info("AlphaLens Bot initialized — 4-condition rule engine")
+        # Guardrail state
+        self.daily_trade_dates: dict = {}  # {ticker: "YYYY-MM-DD"} last BUY date per ticker
+        self.session_pnl: float = 0.0      # running paper PnL this session, used for drawdown check
+        log.info("AlphaLens Bot initialized -- 4-condition rule engine + 3 guardrails")
 
     # ── Compute indicators ────────────────────────────────────────────────────
     def _compute_indicators(self, ticker: str) -> dict | None:
@@ -153,6 +161,14 @@ class AlphaLensBot:
         headlines = self.market.get_news(ticker)
         sentiment = self.agent.analyze(ticker, headlines)
         ind       = self._compute_indicators(ticker)
+
+        # Guardrail: warn if too few headlines were analyzed (low confidence signal)
+        n_headlines = sentiment.get("headlines_analyzed", 0)
+        if n_headlines < MIN_HEADLINES_FOR_SIGNAL:
+            log.warning(
+                f"  GUARDRAIL: Only {n_headlines} headline(s) available for {ticker}. "
+                f"FinBERT conviction score may be unreliable. Need >= {MIN_HEADLINES_FOR_SIGNAL}."
+            )
 
         if ind is None:
             return {"ticker": ticker, "signal": "HOLD", "price": 0.0,
@@ -239,6 +255,25 @@ class AlphaLensBot:
         ticker, signal, price = sig["ticker"], sig["signal"], sig["price"]
 
         if signal == "BUY" and ticker not in self.positions:
+            # Guardrail 1: max 1 BUY per ticker per calendar day (anti-overtrading)
+            today = datetime.now().strftime("%Y-%m-%d")
+            if self.daily_trade_dates.get(ticker) == today:
+                log.info(
+                    f"  GUARDRAIL: {ticker} already entered today ({today}). "
+                    f"Skipping to prevent overtrading (limit: {MAX_DAILY_TRADES_PER_TICKER}/day)."
+                )
+                return
+
+            # Guardrail 2: portfolio drawdown circuit breaker
+            drawdown_limit = PORTFOLIO_VALUE * MAX_PORTFOLIO_DRAWDOWN
+            if self.session_pnl <= -drawdown_limit:
+                log.warning(
+                    f"  GUARDRAIL: Session PnL is ${self.session_pnl:+.2f}. "
+                    f"Drawdown limit of {MAX_PORTFOLIO_DRAWDOWN*100:.0f}% (${drawdown_limit:.0f}) reached. "
+                    f"Halting all new entries this session."
+                )
+                return
+
             qty = self._calc_qty(sig["atr"])
             self._execute_paper_order(ticker, "buy", qty, price,
                                        sl=sig["stop_loss"], tp=sig["take_profit"])
@@ -248,12 +283,15 @@ class AlphaLensBot:
                 "stop_loss":   sig["stop_loss"],
                 "take_profit": sig["take_profit"],
             }
+            self.daily_trade_dates[ticker] = today
 
         elif signal == "SELL" and ticker in self.positions:
             pos = self.positions.pop(ticker)
-            pnl = (price - pos["entry_price"]) / pos["entry_price"] * 100
+            trade_pnl = (price - pos["entry_price"]) * pos["qty"]
+            pnl_pct   = (price - pos["entry_price"]) / pos["entry_price"] * 100
+            self.session_pnl += trade_pnl
             self._execute_paper_order(ticker, "sell", pos["qty"], price)
-            log.info(f"  Closed {ticker} | PnL: {pnl:+.2f}%")
+            log.info(f"  Closed {ticker} | PnL: {pnl_pct:+.2f}% (${trade_pnl:+.2f}) | Session PnL: ${self.session_pnl:+.2f}")
 
         else:
             log.info(f"  {ticker} → HOLD")

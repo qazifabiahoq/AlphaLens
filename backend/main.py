@@ -44,6 +44,12 @@ VOLUME_MIN       = 1.1    # Volume must be 10% above 20-day average
 SENT_THRESH      = 7.0
 SENT_EXIT        = 3.0
 
+# Guardrails
+MAX_DAILY_TRADES_PER_TICKER = 1     # Max BUY entries per ticker per calendar day
+MAX_PORTFOLIO_DRAWDOWN      = 0.10  # Halt new entries if session losses exceed 10% of starting capital
+MIN_HEADLINES_FOR_SIGNAL    = 3     # Flag low-confidence if fewer headlines were scored by FinBERT
+STARTING_CAPITAL            = 10_000.0
+
 COMPANY_NAMES = {
     "AAPL": "Apple Inc.",
     "MSFT": "Microsoft Corporation",
@@ -203,6 +209,57 @@ def compute_signal(ticker):
             f"RSI: {rsi:.1f}. Price vs 50MA: {price_vs_ma:+.1f}%."
         )
 
+    # Guardrail checks (informational -- these block execution in bot.py; here we just flag them)
+    guardrail_warnings = []
+
+    # Guardrail 1: low-confidence sentiment (too few headlines)
+    n_headlines = sentiment.get("headlines_analyzed", 0)
+    if n_headlines < MIN_HEADLINES_FOR_SIGNAL:
+        guardrail_warnings.append(
+            f"Low confidence: only {n_headlines} headline(s) analyzed by FinBERT "
+            f"(minimum recommended: {MIN_HEADLINES_FOR_SIGNAL})"
+        )
+
+    # Guardrail 2: check if this ticker was already traded today (anti-overtrading)
+    today = datetime.now().strftime("%Y-%m-%d")
+    all_trades = load_trades()
+    already_traded_today = any(
+        t.get("ticker") == ticker
+        and t.get("signal") == "BUY"
+        and t.get("timestamp", "")[:10] == today
+        for t in all_trades
+    )
+    if already_traded_today and signal == "BUY":
+        guardrail_warnings.append(
+            f"Daily trade limit: {ticker} was already bought today ({today}). "
+            f"Max {MAX_DAILY_TRADES_PER_TICKER} BUY per ticker per day."
+        )
+        signal = "HOLD"
+        reason = f"GUARDRAIL override: {ticker} already entered today. Holding to prevent overtrading."
+
+    # Guardrail 3: portfolio drawdown circuit breaker
+    completed_trades = [t for t in all_trades if t.get("signal") == "SELL"]
+    # Approximate session PnL from the buy/sell pairs logged in trades.json
+    buy_map = {}
+    session_pnl = 0.0
+    for t in all_trades:
+        if t.get("signal") == "BUY":
+            buy_map[t["ticker"]] = t
+        elif t.get("signal") == "SELL" and t["ticker"] in buy_map:
+            buy_price  = buy_map[t["ticker"]]["price"]
+            sell_price = t["price"]
+            session_pnl += (sell_price - buy_price)
+            del buy_map[t["ticker"]]
+    drawdown_limit = STARTING_CAPITAL * MAX_PORTFOLIO_DRAWDOWN
+    if session_pnl <= -drawdown_limit and signal == "BUY":
+        guardrail_warnings.append(
+            f"Circuit breaker: estimated session PnL is ${session_pnl:+.2f}. "
+            f"Drawdown limit of {MAX_PORTFOLIO_DRAWDOWN*100:.0f}% (${drawdown_limit:.0f}) reached. "
+            f"New entries paused."
+        )
+        signal = "HOLD"
+        reason = f"GUARDRAIL override: portfolio drawdown limit reached. No new entries until losses recover."
+
     if signal in ("BUY", "SELL"):
         save_trade({
             "ticker":      ticker,
@@ -248,6 +305,7 @@ def compute_signal(ticker):
             }
             for h in news[:5]
         ],
+        "guardrail_warnings": guardrail_warnings,
     }
 
 
@@ -276,6 +334,7 @@ def fallback_signal(ticker):
         "open":             0.0,
         "volume":           "0",
         "headlines":        [],
+        "guardrail_warnings": [],
     }
 
 

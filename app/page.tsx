@@ -479,6 +479,24 @@ function DashboardTab({
               </p>
             </div>
           )}
+
+          {currentData.guardrail_warnings && currentData.guardrail_warnings.length > 0 && (
+            <div className="mt-3 rounded-sm border border-yellow-500/40 bg-yellow-500/5 p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />
+                <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-yellow-400">
+                  Guardrail Active
+                </span>
+              </div>
+              <div className="space-y-1">
+                {currentData.guardrail_warnings.map((warning: string, idx: number) => (
+                  <p key={idx} className="font-sans text-[12px] text-yellow-200/80 leading-relaxed">
+                    {warning}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <aside className="w-[340px] border-l border-[var(--border)] bg-[var(--bg-surface)] min-h-[calc(100vh-52px)] p-4">
@@ -841,18 +859,57 @@ function StrategyTab() {
       <div className="mb-12">
         <h2 className="font-sans text-[20px] font-semibold text-white mb-6">GUARDRAILS</h2>
 
-        <div className="space-y-3">
-          {[
-            'Does not feed price numbers or financial data into the language model',
-            'Does not act on a single headline regardless of its sentiment score',
-            'Does not override programmatic stop-loss rules based on LLM output',
-            'Does not hold more than one open position per ticker simultaneously',
-          ].map((item) => (
-            <div key={item} className="flex items-start gap-3">
-              <X className="w-5 h-5 text-[var(--red)] flex-shrink-0 mt-0.5" />
-              <span className="font-sans text-[14px] text-[var(--text-primary)]">{item}</span>
-            </div>
-          ))}
+        <p className="font-sans text-[13px] text-[var(--text-secondary)] mb-5">
+          AlphaLens enforces two types of guardrails: hard rules about how the LLM is used, and active runtime protections that block trades before they execute.
+        </p>
+
+        <div className="mb-6">
+          <div className="font-sans text-[11px] text-[var(--text-secondary)] uppercase tracking-widest mb-3">LLM USAGE LIMITS</div>
+          <div className="space-y-3">
+            {[
+              'Does not feed price numbers or financial data into the language model',
+              'Does not act on a single headline regardless of its sentiment score',
+              'Does not override programmatic stop-loss rules based on LLM output',
+              'Does not hold more than one open position per ticker simultaneously',
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <X className="w-5 h-5 text-[var(--red)] flex-shrink-0 mt-0.5" />
+                <span className="font-sans text-[14px] text-[var(--text-primary)]">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="font-sans text-[11px] text-[var(--text-secondary)] uppercase tracking-widest mb-3">ACTIVE RUNTIME PROTECTIONS</div>
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              {
+                label: 'Daily Trade Limit',
+                rule: 'Max 1 BUY per ticker per day',
+                desc: 'Even if all 4 entry conditions pass again later in the day, the bot skips the ticker. This prevents the system from hammering the same stock on a single news cycle and overexposing the portfolio.',
+              },
+              {
+                label: 'Drawdown Circuit Breaker',
+                rule: 'Halt new entries if session losses exceed 10%',
+                desc: 'If the cumulative paper PnL for the session drops below negative 10% of starting capital ($1,000 on a $10,000 portfolio), all new BUY orders are blocked for the rest of the session. Losses stop compounding.',
+              },
+              {
+                label: 'Low Confidence Warning',
+                rule: 'Flag signals with fewer than 3 headlines',
+                desc: 'FinBERT averages across all available headlines. If fewer than 3 headlines were found, the conviction score may reflect one unusual story rather than a real sentiment trend. The bot logs a warning and flags the signal as low confidence.',
+              },
+            ].map((item) => (
+              <div key={item.label} className="border border-[var(--green)]/30 bg-[var(--green)]/5 rounded-sm p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <Check className="w-4 h-4 text-[var(--green)] flex-shrink-0" />
+                  <div className="font-sans text-[11px] text-[var(--text-secondary)] uppercase tracking-wide">{item.label}</div>
+                </div>
+                <div className="font-mono text-[12px] font-bold text-[var(--green)] mb-2">{item.rule}</div>
+                <p className="font-sans text-[12px] text-[var(--text-primary)] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
