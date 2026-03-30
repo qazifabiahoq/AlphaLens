@@ -7,7 +7,7 @@ An AI-powered trading assistant that reads financial news, scores how positive o
 
 **To run locally:**
 
-**Step 1 — create the environment file** (one-time setup):
+**Step 1: Create the environment file** (one-time setup):
 
 Create a file called `.env.local` in the project root with this content:
 
@@ -17,7 +17,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 This tells the frontend where to find the backend. No external API keys are needed.
 
-**Step 2 — install Python dependencies:**
+**Step 2: Install Python dependencies:**
 
 ```bash
 cd backend
@@ -26,23 +26,23 @@ pip install -r requirements.txt
 
 Note: `torch` and `transformers` are large packages (~2–3 GB total). The FinBERT model itself (~500 MB) downloads automatically the first time the backend starts. This is a one-time download.
 
-**Step 3 — start both servers** (two separate terminals):
+**Step 3: Start both servers** (two separate terminals):
 
 ```bash
-# Terminal 1 — backend (FastAPI, runs on http://localhost:8000)
+# Terminal 1 - backend (FastAPI, runs on http://localhost:8000)
 cd backend
 python -m uvicorn main:app --reload
 
-# Terminal 2 — frontend (Next.js, runs on http://localhost:3000)
+# Terminal 2 - frontend (Next.js, runs on http://localhost:3000)
 npm install
 npm run dev
 ```
 
-**Step 4 — open the app:**
+**Step 4: Open the app:**
 
 Go to [http://localhost:3000](http://localhost:3000)
 
-**Step 5 — run the backtest (optional, generates equity curve):**
+**Step 5: Run the backtest (optional, generates equity curve):**
 
 Click the **Backtest** tab in the dashboard, or run it directly from the terminal:
 
@@ -53,8 +53,8 @@ python backtest.py
 
 This produces two files in the `backend/` folder:
 
-- `equity_curve.png` — static chart image (open with any image viewer)
-- `backtest_results.html` — interactive Plotly chart (open in any browser)
+- `equity_curve.png` - static chart image (open with any image viewer)
+- `backtest_results.html` - interactive Plotly chart (open in any browser)
 
 **Note on paper trading execution:** Alpaca Markets' paper trading API does not support Canadian-resident accounts due to regulatory restrictions. AlphaLens uses Yahoo Finance (yfinance) as the equivalent data source, as permitted by the project specification ("or equivalent free data sources like Yahoo Finance"). Trade execution is fully simulated: every BUY and SELL decision is logged to `trades.json` and `alphalens.log` with the same stop-loss and take-profit levels that would be sent to a live broker. The paper trading indicator is visible at all times in the dashboard UI.
 
@@ -78,9 +78,9 @@ Every 60 seconds it pulls the latest news headlines for each stock, runs those h
 
 The system is organized into two distinct layers:
 
-**The Brain (LLM — `sentiment.py`):** FinBERT reads up to 10 recent news headlines per stock and classifies the overall tone as POSITIVE, NEGATIVE, or NEUTRAL. It outputs a conviction score from 0 to 10. This is the only place where unstructured text is processed. LLMs are not used anywhere else in the system because they are unreliable at numerical tasks. The Brain handles what it is good at: reading and interpreting language.
+**The Brain (LLM - `sentiment.py`):** FinBERT reads up to 10 recent news headlines per stock and classifies the overall tone as POSITIVE, NEGATIVE, or NEUTRAL. It outputs a conviction score from 0 to 10. This is the only place where unstructured text is processed. LLMs are not used anywhere else in the system because they are unreliable at numerical tasks. The Brain handles what it is good at: reading and interpreting language.
 
-**The Body (Deterministic rules — `market_data.py`, `main.py`, `bot.py`):** The execution engine handles everything quantitative. It fetches OHLCV price data from Yahoo Finance, computes technical indicators (moving average, RSI, ATR, volume ratio), evaluates the entry and exit conditions, sizes each position based on volatility, and logs every trade decision. None of this involves the LLM. These are hard rules with no ambiguity.
+**The Body (Deterministic rules - `market_data.py`, `main.py`, `bot.py`):** The execution engine handles everything quantitative. It fetches OHLCV price data from Yahoo Finance, computes technical indicators (moving average, RSI, ATR, volume ratio), evaluates the entry and exit conditions, sizes each position based on volatility, and logs every trade decision. None of this involves the LLM. These are hard rules with no ambiguity.
 
 A trade only happens when the Brain and the Body agree. The LLM must confirm that news is strongly positive (conviction ≥ 7.0) AND the price data must confirm an uptrend, healthy momentum, and real buying volume. If either layer says no, the system holds.
 
@@ -207,7 +207,7 @@ This fallback is less accurate than FinBERT but it means the platform keeps runn
 A major risk in any LLM-driven system is acting on signals that are too frequent, too noisy, or based on model confusion rather than real market conditions. AlphaLens has five specific guardrails built in.
 
 **1. The LLM never touches price data.**
-FinBERT only reads text (news headlines). All numerical decisions — entry price, stop-loss, take-profit, position size — are computed by deterministic rules. This eliminates the risk of the model hallucinating a price or miscalculating a percentage.
+FinBERT only reads text (news headlines). All numerical decisions (entry price, stop-loss, take-profit, position size) are computed by deterministic rules. This eliminates the risk of the model hallucinating a price or miscalculating a percentage.
 
 **2. Sentiment alone is never enough to trade.**
 Even a conviction score of 10/10 does not trigger a buy if the price is below the 50-day moving average, the RSI is outside the 30–70 range, or volume is below the minimum. All four conditions must pass simultaneously. This prevents overtrading on news noise.
@@ -371,8 +371,8 @@ Or start the backend and click the Backtest tab in the dashboard. First run take
 
 Two chart files are saved automatically inside the `backend/` folder after the backtest runs:
 
-- `equity_curve.png` — open by double-clicking in File Explorer. Shows portfolio value vs. SPY over 12 months.
-- `backtest_results.html` — open in any browser (Chrome, Edge, Firefox). Interactive version of the same chart with hover tooltips and zoom.
+- `equity_curve.png` - open by double-clicking in File Explorer. Shows portfolio value vs. SPY over 12 months.
+- `backtest_results.html` - open in any browser (Chrome, Edge, Firefox). Interactive version of the same chart with hover tooltips and zoom.
 
 **Results (12-month backtest, March 2025 – March 2026):**
 
@@ -383,16 +383,16 @@ Two chart files are saved automatically inside the `backend/` folder after the b
 | Sharpe Ratio | -0.16 | 0.93 |
 | Sortino Ratio | -0.18 | n/a |
 | Max Drawdown | -17.36% | -13.72% |
-| Win Rate | — | n/a |
-| Total Trades | — | n/a |
+| Win Rate | n/a | n/a |
+| Total Trades | n/a | n/a |
 
 **Interpreting these results:**
 
 AlphaLens underperformed SPY buy-and-hold over this 12-month window. This is not unexpected and reflects two things worth understanding.
 
-First, the 12-month window ending March 2026 included a sharp market correction in early 2026 driven by macroeconomic uncertainty. During that period, many stocks traded below their 50-day moving average, which correctly caused AlphaLens to stay out of trades. A system that avoids buying in a downtrend is behaving as designed — but it also means it missed the recovery periods that lifted SPY.
+First, the 12-month window ending March 2026 included a sharp market correction in early 2026 driven by macroeconomic uncertainty. During that period, many stocks traded below their 50-day moving average, which correctly caused AlphaLens to stay out of trades. A system that avoids buying in a downtrend is behaving as designed, but it also means it missed the recovery periods that lifted SPY.
 
-Second, the goal of this project is not to beat the S&P 500. The professor's stated objective is "the creation of a robust, reproducible, and explainable data pipeline." AlphaLens achieves that: every signal is traceable, every decision is logged, and the reasoning behind every BUY, SELL, or HOLD is printed in plain language. The strategy is intentionally conservative — it requires four conditions to align before entering a trade precisely to avoid reckless speculation.
+Second, the goal of this project is not to beat the S&P 500. The professor's stated objective is "the creation of a robust, reproducible, and explainable data pipeline." AlphaLens achieves that: every signal is traceable, every decision is logged, and the reasoning behind every BUY, SELL, or HOLD is printed in plain language. The strategy is intentionally conservative: it requires four conditions to align before entering a trade precisely to avoid reckless speculation.
 
 The honest takeaway is that a sentiment-gated, trend-following strategy performs well in trending bull markets and defensively in corrections, but may underperform a passive index over short windows. This is a known property of rule-based systematic strategies and is consistent with academic literature on the topic.
 

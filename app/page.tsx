@@ -471,7 +471,7 @@ function DashboardTab({
                   : 'text-[var(--accent)]'
                 }`}>FinBERT Analysis</span>
                 <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-wide">
-                  — why {currentData.signal}?
+                  - why {currentData.signal}?
                 </span>
               </div>
               <p className="font-sans text-[12px] text-[var(--text-primary)] leading-relaxed">
@@ -898,6 +898,26 @@ function StrategyTab() {
                 label: 'Low Confidence Warning',
                 rule: 'Flag signals with fewer than 3 headlines',
                 desc: 'FinBERT averages across all available headlines. If fewer than 3 headlines were found, the conviction score may reflect one unusual story rather than a real sentiment trend. The bot logs a warning and flags the signal as low confidence.',
+              },
+              {
+                label: 'RSI Momentum Guard',
+                rule: 'Require RSI between 30 and 70 to enter',
+                desc: 'Entering a stock with RSI above 70 means buying after other investors have already bid it up aggressively. The stock is likely due for a pullback. Requiring RSI below 70 prevents the bot from chasing momentum at the top of a move.',
+              },
+              {
+                label: 'Volume Confirmation',
+                rule: 'Block entries on below-average volume',
+                desc: 'A price move on low volume can be caused by just a few trades and may reverse immediately. Requiring volume at least 1.1 times the 20-day average ensures real market participation before any trade is entered.',
+              },
+              {
+                label: 'News Cache Shield',
+                rule: '15-minute cache per ticker',
+                desc: 'Yahoo Finance RSS results are cached for 15 minutes. This prevents the bot from re-scoring the same headlines multiple times in a short window, avoids hammering the news source, and stops duplicate signals from triggering repeated entries.',
+              },
+              {
+                label: 'Keyword Fallback',
+                rule: 'Automatic backup if FinBERT fails to load',
+                desc: 'If FinBERT cannot load due to memory, network, or storage issues, the system automatically switches to a keyword-based scorer. The platform keeps producing signals without interruption. The bot never goes fully offline due to a model failure.',
               },
             ].map((item) => (
               <div key={item.label} className="border border-[var(--green)]/30 bg-[var(--green)]/5 rounded-sm p-4">
