@@ -221,6 +221,9 @@ Requiring volume at least 1.1× the 20-day average filters out price moves cause
 **5. News caching prevents API hammering.**
 Yahoo Finance RSS results are cached for 15 minutes per ticker. This prevents the bot from flooding the news source with repeated requests and avoids acting on stale or duplicated headlines within a short window.
 
+**6. Keyword fallback prevents complete failure.**
+If FinBERT cannot load for any reason, the system automatically switches to a keyword-based backup that counts positive and negative words in headlines. The platform keeps running and producing signals even without the full AI model. This means the system never goes completely offline due to a model loading failure.
+
 ---
 
 ## The Paper Trading Bot
@@ -393,7 +396,27 @@ Second, the goal of this project is not to beat the S&P 500. The professor's sta
 
 The honest takeaway is that a sentiment-gated, trend-following strategy performs well in trending bull markets and defensively in corrections, but may underperform a passive index over short windows. This is a known property of rule-based systematic strategies and is consistent with academic literature on the topic.
 
+**Why the backtest sentiment is different from the live system:**
+
+The live bot pulls real Yahoo Finance headlines at the moment of every signal check and runs them through FinBERT in real time. That part is completely real. The backtest limitation is different. The backtest goes back 12 months in history and we have real historical price data for all 12 months. But we do not have the actual news headlines from 12 months ago because Yahoo Finance does not store old headlines for free. Historical news databases that go back months or years cost money. So for the backtest only, we used price momentum as a substitute for the sentiment signal. This is a known and documented simplification. The live system is not affected by this at all.
+
 **Known limitation:** The backtesting sentiment gate uses FinBERT run on today's headlines as a static filter applied across the full 12-month window. This is a deliberate simplification: tick-level historical sentiment data is not freely available. The backtest uses a lower conviction threshold (3.0) compared to the live bot (7.0) to account for this — on days when market news is broadly cautious, applying the live threshold would block all trades entirely, producing a flat equity curve with zero trades, which is not a meaningful backtest result. The live bot always uses the most current headlines at the moment of each signal check and is not affected by this simplification.
+
+---
+
+## Future Improvements
+
+Several enhancements would make AlphaLens more robust in future versions.
+
+**Market regime filter.** If SPY itself is in a downtrend, the system should block all new buys regardless of individual stock signals. Buying individual stocks during a broad market collapse is risky no matter how good the news sounds for one company. Adding a check that looks at whether the overall market is healthy before allowing any trade would reduce losses during market-wide crashes.
+
+**Earnings calendar awareness.** The system currently has no knowledge of upcoming earnings announcements. Buying a stock 24 to 48 hours before its earnings report is very risky because prices can move dramatically in either direction. A future version would block new entries within two days of a known earnings date.
+
+**Maximum portfolio exposure limit.** Right now the system could theoretically be in all four stocks at the same time. During a broad market downturn that would mean all four positions losing money simultaneously. Capping the number of open positions at two at a time would reduce this concentration risk.
+
+**News source quality scoring.** All Yahoo Finance headlines are currently treated equally. A headline from Reuters or the Wall Street Journal should carry more weight than a smaller blog. Adding a source credibility score that adjusts the conviction output would make the sentiment signal more reliable.
+
+**More stocks and sectors.** All four tracked stocks are large-cap US technology companies. They tend to move together, which means the portfolio is not truly diversified. Expanding to include stocks from different sectors like energy, healthcare, or financials would test whether the strategy holds up outside of tech and reduce correlated risk.
 
 ---
 
@@ -404,6 +427,19 @@ Stock markets move on information. When a company reports better earnings than e
 AlphaLens is a demonstration that you can automate the reading and the reacting. A domain-specific AI model handles the news. A transparent rule engine handles the decision. Volatility-adjusted risk management handles the exits. None of the logic is hidden or mysterious. Every signal comes with a plain-language explanation of exactly what was checked and why the decision was made.
 
 The result is a system that can process four stocks, analyze dozens of headlines, compute technical indicators, and output a reasoned BUY, SELL, or HOLD recommendation every 60 seconds without any human involvement. That is the whole point.
+
+The honest result of the backtest is that the system underperformed a simple buy and hold of SPY over this 12-month window. But that is not the full story. A system that refuses to buy during a market downturn is behaving exactly as designed. The goal was never to beat the market at all costs. The goal was to build something transparent, explainable, and disciplined. Every single decision AlphaLens makes can be traced back to a specific rule or a specific headline. That level of explainability is rare in AI systems and is exactly what responsible AI deployment looks like in a high-stakes domain like finance.
+
+---
+
+## References
+
+The technical indicators used in AlphaLens are based on widely established methods in financial technical analysis:
+
+- 50-Day Moving Average: https://www.fidelity.com/viewpoints/active-investor/moving-averages
+- RSI 30–70 range (original Wilder thresholds): https://www.fidelity.com/learning-center/trading-investing/technical-indicator-guide/RSI
+- RSI overbought and oversold levels: https://www.schwab.com/learn/story/identifying-trend-reversals-with-rsi
+- Volume 20-day average confirmation: https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-markets/average-daily-trading-volume-adtv/
 
 ---
 
