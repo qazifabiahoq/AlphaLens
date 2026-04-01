@@ -118,6 +118,18 @@ def load_trades():
     return []
 
 
+def _has_open_position(ticker: str, trades: list) -> bool:
+    """Returns True if the last BUY for this ticker has no matching SELL after it."""
+    open_pos = False
+    for t in trades:
+        if t.get("ticker") == ticker:
+            if t.get("signal") == "BUY":
+                open_pos = True
+            elif t.get("signal") == "SELL":
+                open_pos = False
+    return open_pos
+
+
 def save_trade(trade):
     trades = load_trades()
     trades.append(trade)
@@ -161,9 +173,12 @@ def compute_signal(ticker):
         or sentiment["score"] < SENT_EXIT
     )
 
-    if entry_ok:
+    all_trades   = load_trades()
+    has_position = _has_open_position(ticker, all_trades)
+
+    if entry_ok and not has_position:
         signal = "BUY"
-    elif any_exit:
+    elif any_exit and has_position:
         signal = "SELL"
     else:
         signal = "HOLD"
@@ -222,7 +237,6 @@ def compute_signal(ticker):
 
     # Guardrail 2: check if this ticker was already traded today (anti-overtrading)
     today = datetime.now().strftime("%Y-%m-%d")
-    all_trades = load_trades()
     already_traded_today = any(
         t.get("ticker") == ticker
         and t.get("signal") == "BUY"
