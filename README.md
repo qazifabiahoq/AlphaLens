@@ -416,6 +416,8 @@ Several enhancements would make AlphaLens more robust in future versions.
 
 **News source quality scoring.** All Yahoo Finance headlines are currently treated equally. A headline from Reuters or the Wall Street Journal should carry more weight than a smaller blog. Adding a source credibility score that adjusts the conviction output would make the sentiment signal more reliable.
 
+**SimDec sensitivity analysis.** The current validation is a single 12-month backtest comparing AlphaLens against SPY. A stronger approach would be to apply Simulation Decomposition, or SimDec, which runs thousands of simulated scenarios and reveals which of the four input conditions, the 50-day moving average, RSI, volume, or FinBERT conviction score, actually drives the trading decisions the most. It would also uncover whether any of the four conditions are redundant or whether certain combinations interact with each other in unexpected ways. This would give us a much deeper understanding of the sensitivity of our signal to each individual input rather than just observing the final backtest result.
+
 **More stocks and sectors.** All four tracked stocks are large-cap US technology companies. They tend to move together, which means the portfolio is not truly diversified. Expanding to include stocks from different sectors like energy, healthcare, or financials would test whether the strategy holds up outside of tech and reduce correlated risk.
 
 ---
